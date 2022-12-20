@@ -12,14 +12,21 @@ namespace PlaywrightTests.Pages
             _page = page;
         }
 
-        public virtual ILocator SignInLink => _page.GetByRole(AriaRole.Link, new () { NameString = "Sign In" });
-    
+        public virtual ILocator SignInLink => _page.GetByRole(AriaRole.Link, new() { NameString = "Sign In" });
+        public virtual ILocator EmailField => _page.GetByRole(AriaRole.Textbox, new() { NameString = "Email*" });
+        public virtual ILocator Password => _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password*" });
+        public virtual ILocator SignInButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Sign In" });
+       
 
-        public async void ClickSignIn()
+
+        public async void Click(ILocator locator)
         {
-            await SignInLink.ClickAsync();
+            await locator.ClickAsync();
+        }
+        public async void FillField(ILocator locator, string fieldValue)
+        {
+            await locator.FillAsync(fieldValue);
         }
 
-                     
     }
 }

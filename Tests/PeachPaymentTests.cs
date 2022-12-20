@@ -20,7 +20,7 @@ class Tests : PageTest
         await Page.GotoAsync("https://magento.x2y.dev/");
 
         await Page.GetByRole(AriaRole.Link, new() { NameString = "Sign In" }).ClickAsync();
-      //  await Page.WaitForURLAsync("https://magento.x2y.dev/customer/account/login/referer/aHR0cHM6Ly9tYWdlbnRvLngyeS5kZXYv/");
+        //  await Page.WaitForURLAsync("https://magento.x2y.dev/customer/account/login/referer/aHR0cHM6Ly9tYWdlbnRvLngyeS5kZXYv/");
 
         await Page.GetByRole(AriaRole.Textbox, new() { NameString = "Email*" }).ClickAsync();
 

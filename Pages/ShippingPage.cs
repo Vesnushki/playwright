@@ -1,0 +1,32 @@
+﻿using Microsoft.Playwright;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PeachPayment.Pages
+{
+    internal class ShippingPage
+    {
+        private readonly IPage _page;
+
+        public ShippingPage(IPage page)
+        {
+            _page = page;
+        }
+        public virtual ILocator ShippingMethod => _page.GetByRole(AriaRole.Radio, new() { NameString = "Table Rate Best Way" });
+        public virtual ILocator NextButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Next" });
+        
+
+        public async void Check(ILocator locator)
+        {
+            await locator.CheckAsync();
+        }
+
+        public async void Click(ILocator locator)
+        {
+            await locator.ClickAsync();
+        }
+    }
+}
