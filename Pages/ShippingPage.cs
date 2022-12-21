@@ -19,12 +19,12 @@ namespace PeachPayment.Pages
         public virtual ILocator NextButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Next" });
         
 
-        public async void Check(ILocator locator)
+        public async Task Check(ILocator locator)
         {
             await locator.CheckAsync();
         }
 
-        public async void Click(ILocator locator)
+        public async Task Click(ILocator locator)
         {
             await locator.ClickAsync();
         }

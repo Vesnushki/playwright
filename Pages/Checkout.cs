@@ -20,7 +20,7 @@ namespace PeachPayment.Pages
 
 
 
-        public async void Click(ILocator locator)
+        public async Task Click(ILocator locator)
         {
             await locator.ClickAsync();
         }

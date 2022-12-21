@@ -19,11 +19,11 @@ namespace PlaywrightTests.Pages
        
 
 
-        public async void Click(ILocator locator)
+        public async Task Click(ILocator locator)
         {
-            await locator.ClickAsync();
+             await locator.ClickAsync();
         }
-        public async void FillField(ILocator locator, string fieldValue)
+        public async Task FillField(ILocator locator, string fieldValue)
         {
             await locator.FillAsync(fieldValue);
         }

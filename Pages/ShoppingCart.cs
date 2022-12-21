@@ -18,7 +18,7 @@ namespace PeachPayment.Pages
         public virtual ILocator ProceedToCheckout => _page.GetByRole(AriaRole.Button, new() { NameString = "Proceed to Checkout" });
         
 
-        public async void Click(ILocator locator)
+        public async Task Click(ILocator locator)
         {
             await locator.ClickAsync();
         }

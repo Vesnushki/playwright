@@ -21,7 +21,7 @@ namespace PeachPayment.Pages
         public virtual ILocator AddToCartButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Add to Cart" });
         public virtual ILocator ShoppingCart => _page.GetByRole(AriaRole.Link, new() { NameString = "shopping cart" });
 
-        public async void Click(ILocator locator)
+        public async Task Click(ILocator locator)
         {
             await locator.ClickAsync();
         }

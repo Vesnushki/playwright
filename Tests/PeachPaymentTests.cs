@@ -2,6 +2,8 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
+using PeachPayment.Pages;
+using PlaywrightTests.Pages;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,113 +17,84 @@ namespace PeachPayment.Tests;
 class Tests : PageTest
 {
     [Test]
-    public async Task Main()
+    public async Task LoggedInCustomerOrderDetailsWithSimpleProduct()
     {
-        await Page.GotoAsync("https://magento.x2y.dev/");
+        var page = await Context.NewPageAsync();
+        var LoginPage = new CustomerLogin(page);
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var PeachForm = new PeachForm(page);
+        var SuccessPage = new SuccessOrderPage(page);
+        var AdminLogin = new AdminLogin(page);
 
-        await Page.GetByRole(AriaRole.Link, new() { NameString = "Sign In" }).ClickAsync();
-        //  await Page.WaitForURLAsync("https://magento.x2y.dev/customer/account/login/referer/aHR0cHM6Ly9tYWdlbnRvLngyeS5kZXYv/");
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField,TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await ProductPage.Click(ProductPage.Product);
+        await page.WaitForURLAsync(TestSettings.ProductUrl);
+        await ProductPage.Click(ProductPage.ProductSize);
+        await ProductPage.Click(ProductPage.ProductColor);
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Click(Checkout.PayWithCardRedirectMethod);
+        await Checkout.Click(Checkout.ContinueButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
+        await PeachForm.Click(PeachForm.CardNumber);
+        await PeachForm.FillField(PeachForm.CardNumber, TestSettings.CreditCardNumber);
+        await PeachForm.Click(PeachForm.ExpireDate);
+        await PeachForm.FillField(PeachForm.ExpireDate, TestSettings.ExpiryDate);
+        await PeachForm.Click(PeachForm.CardHolder);
+        await PeachForm.FillField(PeachForm.CardHolder, TestSettings.CardHolder);
+        await page.Mouse.WheelAsync(0, 100);
+        await PeachForm.Click(PeachForm.CVV);
+        await PeachForm.FillField(PeachForm.CVV, TestSettings.CVV);
+        await PeachForm.Click(PeachForm.CardNumber);
+        await PeachForm.Click(PeachForm.PayNow);
+        await page.WaitForURLAsync("https://magento.x2y.dev/checkout/onepage/success/");
+        await Expect(page).ToHaveURLAsync("https://magento.x2y.dev/checkout/onepage/success/");
+        await page.GetByText("Thank you for your purchase!").WaitForAsync();
+        var orderNumber = await page.TextContentAsync(SuccessPage.locator);
+        await page.GotoAsync(TestSettings.AdminUrl);
+        await AdminLogin.Click(AdminLogin.UserName);
+        await AdminLogin.FillField(AdminLogin.UserName,TestSettings.AdminUserName);
+        await AdminLogin.Click(AdminLogin.Password);
+        await AdminLogin.FillField(AdminLogin.Password,TestSettings.AdminPassword);
+        await AdminLogin.Click(AdminLogin.SignIn);  
 
-        await Page.GetByRole(AriaRole.Textbox, new() { NameString = "Email*" }).ClickAsync();
+        //await Page.GetByRole(AriaRole.Button, new() { NameString = "Sign in" }).ClickAsync();
 
-        await Page.GetByRole(AriaRole.Textbox, new() { NameString = "Email*" }).FillAsync("roni_cost@example.com");
+        //await Page.WaitForURLAsync("https://magento.x2y.dev/admin/admin/dashboard/");
 
-        await Page.GetByRole(AriaRole.Textbox, new() { NameString = "Password*" }).ClickAsync();
+        //await Page.GetByRole(AriaRole.Link, new() { NameString = " Sales" }).ClickAsync();
 
-        await Page.GetByRole(AriaRole.Textbox, new() { NameString = "Password*" }).FillAsync("roni_cost3@example.com");
+        //await Page.GetByRole(AriaRole.Link, new() { NameString = "Orders" }).ClickAsync();
 
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Sign In" }).ClickAsync();
-        await Page.WaitForURLAsync("https://magento.x2y.dev/");
+        //await Page.WaitForLoadStateAsync();
 
-        await Page.Locator("#maincontent").GetByText("Radiant Tee").ClickAsync();
-        await Page.WaitForURLAsync("https://magento.x2y.dev/radiant-tee.html");
+        //await Page.WaitForSelectorAsync("tbody tr:nth-child(1) a");
 
-        await Page.GetByRole(AriaRole.Option, new() { NameString = "XS" }).ClickAsync();
+        //await Page.Locator("tbody tr:nth-child(1) a").First.ClickAsync();
 
-        await Page.GetByRole(AriaRole.Option, new() { NameString = "Blue" }).ClickAsync();
+        //var orderTitle = await Page.TextContentAsync(".admin__page-section-item-title span");
 
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add to Cart" }).ClickAsync();
+        //orderTitle.Should().Contain(SuccessPage.TextContent(););
 
-        await Page.GetByRole(AriaRole.Link, new() { NameString = "shopping cart" }).ClickAsync();
-        await Page.WaitForURLAsync("https://magento.x2y.dev/checkout/cart/");
+        //var status = await Page.TextContentAsync("#order_status");
 
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Proceed to Checkout" }).ClickAsync();
-        await Page.WaitForURLAsync("https://magento.x2y.dev/checkout/#shipping");
+        //Console.WriteLine(status);
 
-        await Page.GetByRole(AriaRole.Radio, new() { NameString = "Table Rate Best Way" }).CheckAsync();
-
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Next" }).ClickAsync();
-        await Page.WaitForURLAsync("https://magento.x2y.dev/checkout/#payment");
-
-        await Page.GetByLabel("Pay with Card (Redirect)").CheckAsync();
-
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Continue to payment" }).ClickAsync();
-
-        await Page.WaitForURLAsync("https://testsecure.peachpayments.com/checkout");
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").FrameLocator("iframe[name=\"card\\.number\"]").GetByPlaceholder("Card Number").ClickAsync();
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").FrameLocator("iframe[name=\"card\\.number\"]").GetByPlaceholder("Card Number").FillAsync("5105105105105100");
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByRole(AriaRole.Textbox, new() { NameString = "Expiry Date" }).ClickAsync();
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByRole(AriaRole.Textbox, new() { NameString = "Expiry Date" }).FillAsync("12 / 28");
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByPlaceholder("Card Holder").ClickAsync();
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByPlaceholder("Card Holder").FillAsync("Test");
-
-        await Page.Mouse.WheelAsync(0, 100);
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").FrameLocator("iframe[name=\"card\\.cvv\"]").GetByPlaceholder("CVV").ClickAsync();
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").FrameLocator("iframe[name=\"card\\.cvv\"]").GetByPlaceholder("CVV").FillAsync("123");
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").FrameLocator("iframe[name=\"card\\.number\"]").GetByPlaceholder("Card Number").ClickAsync();
-
-        await Page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByRole(AriaRole.Button, new() { NameString = "Pay now" }).ClickAsync();
-
-        await Page.WaitForURLAsync("https://magento.x2y.dev/checkout/onepage/success/");
-
-        await Expect(Page).ToHaveURLAsync("https://magento.x2y.dev/checkout/onepage/success/");
-
-        await Page.GetByText("Thank you for your purchase!").WaitForAsync();
-
-        var orderNumber = await Page.TextContentAsync(".order-number strong");
-
-        await Page.GotoAsync("https://magento.x2y.dev/admin");
-
-        await Page.GetByPlaceholder("user name").ClickAsync();
-
-        await Page.GetByPlaceholder("user name").FillAsync("magento");
-
-        await Page.GetByPlaceholder("password").ClickAsync();
-
-        await Page.GetByPlaceholder("password").FillAsync("Password1");
-
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Sign in" }).ClickAsync();
-
-        await Page.WaitForURLAsync("https://magento.x2y.dev/admin/admin/dashboard/");
-
-        await Page.GetByRole(AriaRole.Link, new() { NameString = " Sales" }).ClickAsync();
-
-        await Page.GetByRole(AriaRole.Link, new() { NameString = "Orders" }).ClickAsync();
-
-        await Page.WaitForLoadStateAsync();
-
-        await Page.WaitForSelectorAsync("tbody tr:nth-child(1) a");
-
-        await Page.Locator("tbody tr:nth-child(1) a").First.ClickAsync();
-
-        var orderTitle = await Page.TextContentAsync(".admin__page-section-item-title span");
-
-        orderTitle.Should().Contain(orderNumber);
-
-        var status = await Page.TextContentAsync("#order_status");
-
-        Console.WriteLine(status);
-
-        status.Should().BeEquivalentTo("Processing");
+        //status.Should().BeEquivalentTo("Processing");
 
     }
 }
