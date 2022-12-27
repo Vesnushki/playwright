@@ -37,7 +37,7 @@
           }
         }
       },
-      "Microsoft.CodeCoverage/17.4.0": {
+      "Microsoft.CodeCoverage/17.4.1": {
         "type": "package",
         "compile": {
           "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {}
@@ -50,11 +50,11 @@
           "build/netstandard2.0/Microsoft.CodeCoverage.targets": {}
         }
       },
-      "Microsoft.NET.Test.Sdk/17.4.0": {
+      "Microsoft.NET.Test.Sdk/17.4.1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeCoverage": "17.4.0",
-          "Microsoft.TestPlatform.TestHost": "17.4.0"
+          "Microsoft.CodeCoverage": "17.4.1",
+          "Microsoft.TestPlatform.TestHost": "17.4.1"
         },
         "compile": {
           "lib/netcoreapp3.1/_._": {}
@@ -129,7 +129,7 @@
           "lib/netstandard2.0/Microsoft.Playwright.TestAdapter.dll": {}
         }
       },
-      "Microsoft.TestPlatform.ObjectModel/17.4.0": {
+      "Microsoft.TestPlatform.ObjectModel/17.4.1": {
         "type": "package",
         "dependencies": {
           "NuGet.Frameworks": "5.11.0",
@@ -226,10 +226,10 @@
           }
         }
       },
-      "Microsoft.TestPlatform.TestHost/17.4.0": {
+      "Microsoft.TestPlatform.TestHost/17.4.1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.4.0",
+          "Microsoft.TestPlatform.ObjectModel": "17.4.1",
           "Newtonsoft.Json": "13.0.1"
         },
         "compile": {
@@ -673,10 +673,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.CodeCoverage/17.4.0": {
-      "sha512": "2oZbSVTC2nAvQ2DnbXLlXS+c25ZyZdWeNd+znWwAxwGaPh9dwQ5NBsYyqQB7sKmJKIUdkKGmN3rzFzjVC81Dtg==",
+    "Microsoft.CodeCoverage/17.4.1": {
+      "sha512": "T21KxaiFawbrrjm0uXjxAStXaBm5P9H6Nnf8BUtBTvIpd8q57lrChVBCY2dnazmSu9/kuX4z5+kAOT78Dod7vA==",
       "type": "package",
-      "path": "microsoft.codecoverage/17.4.0",
+      "path": "microsoft.codecoverage/17.4.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -733,14 +733,14 @@
         "build/netstandard2.0/zh-Hant/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
         "lib/net462/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
         "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
-        "microsoft.codecoverage.17.4.0.nupkg.sha512",
+        "microsoft.codecoverage.17.4.1.nupkg.sha512",
         "microsoft.codecoverage.nuspec"
       ]
     },
-    "Microsoft.NET.Test.Sdk/17.4.0": {
-      "sha512": "VtNZQ83ntG2aEUjy1gq6B4HNdn96se6FmdY/03At8WiqDReGrApm6OB2fNiSHz9D6IIEtWtNZ2FSH0RJDVXl/w==",
+    "Microsoft.NET.Test.Sdk/17.4.1": {
+      "sha512": "kJ5/v2ad+VEg1fL8UH18nD71Eu+Fq6dM4RKBVqlV2MLSEK/AW4LUkqlk7m7G+BrxEDJVwPjxHam17nldxV80Ow==",
       "type": "package",
-      "path": "microsoft.net.test.sdk/17.4.0",
+      "path": "microsoft.net.test.sdk/17.4.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -756,7 +756,7 @@
         "buildMultiTargeting/Microsoft.NET.Test.Sdk.props",
         "lib/net462/_._",
         "lib/netcoreapp3.1/_._",
-        "microsoft.net.test.sdk.17.4.0.nupkg.sha512",
+        "microsoft.net.test.sdk.17.4.1.nupkg.sha512",
         "microsoft.net.test.sdk.nuspec"
       ]
     },
@@ -1109,10 +1109,10 @@
         "microsoft.playwright.testadapter.nuspec"
       ]
     },
-    "Microsoft.TestPlatform.ObjectModel/17.4.0": {
-      "sha512": "oWe7A0wrZhxagTOcaxJ9r0NXTbgkiBQQuCpCXxnP06NsGV/qOoaY2oaangAJbOUrwEx0eka1do400NwNCjfytw==",
+    "Microsoft.TestPlatform.ObjectModel/17.4.1": {
+      "sha512": "v2CwoejusooZa/DZYt7UXo+CJOvwAmqg6ZyFJeIBu+DCRDqpEtf7WYhZ/AWii0EKzANPPLU9+m148aipYQkTuA==",
       "type": "package",
-      "path": "microsoft.testplatform.objectmodel/17.4.0",
+      "path": "microsoft.testplatform.objectmodel/17.4.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1205,14 +1205,14 @@
         "lib/netstandard2.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
         "lib/netstandard2.0/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll",
         "lib/netstandard2.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll",
-        "microsoft.testplatform.objectmodel.17.4.0.nupkg.sha512",
+        "microsoft.testplatform.objectmodel.17.4.1.nupkg.sha512",
         "microsoft.testplatform.objectmodel.nuspec"
       ]
     },
-    "Microsoft.TestPlatform.TestHost/17.4.0": {
-      "sha512": "sUx48fu9wgQF1JxzXeSVtzb7KoKpJrdtIzsFamxET3ZYOKXj+Ej13HWZ0U2nuMVZtZVHBmE+KS3Vv5cIdTlycQ==",
+    "Microsoft.TestPlatform.TestHost/17.4.1": {
+      "sha512": "K7QXM4P4qrDKdPs/VSEKXR08QEru7daAK8vlIbhwENM3peXJwb9QgrAbtbYyyfVnX+F1m+1hntTH6aRX+h/f8g==",
       "type": "package",
-      "path": "microsoft.testplatform.testhost/17.4.0",
+      "path": "microsoft.testplatform.testhost/17.4.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1275,7 +1275,7 @@
         "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll",
         "lib/netcoreapp3.1/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll",
         "lib/netcoreapp3.1/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll",
-        "microsoft.testplatform.testhost.17.4.0.nupkg.sha512",
+        "microsoft.testplatform.testhost.17.4.1.nupkg.sha512",
         "microsoft.testplatform.testhost.nuspec"
       ]
     },
@@ -1804,7 +1804,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "FluentAssertions >= 6.8.0",
-      "Microsoft.NET.Test.Sdk >= 17.4.0",
+      "Microsoft.NET.Test.Sdk >= 17.4.1",
       "Microsoft.Playwright.NUnit >= 1.28.0",
       "NUnit >= 3.13.3",
       "NUnit.Analyzers >= 3.5.0",
@@ -1862,7 +1862,7 @@
           },
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
-            "version": "[17.4.0, )"
+            "version": "[17.4.1, )"
           },
           "Microsoft.Playwright.NUnit": {
             "target": "Package",

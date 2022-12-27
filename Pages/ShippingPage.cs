@@ -15,7 +15,7 @@ namespace PeachPayment.Pages
         {
             _page = page;
         }
-        public virtual ILocator ShippingMethod => _page.GetByRole(AriaRole.Radio, new() { NameString = "Table Rate Best Way" });
+        public virtual ILocator ShippingMethod => _page.GetByRole(AriaRole.Radio, new() { NameString = "Free Shipping" });
         public virtual ILocator NextButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Next" });
         
 
