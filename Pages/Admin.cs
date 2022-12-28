@@ -20,6 +20,8 @@ namespace PeachPayment.Pages
         public virtual ILocator SignIn => _page.GetByRole(AriaRole.Button, new() { NameString = "Sign in" });
         public virtual ILocator Sales => _page.GetByRole(AriaRole.Link, new() { NameString = " Sales" });
         public virtual ILocator Orders => _page.GetByRole(AriaRole.Link, new() { NameString = "Orders" });
+        public virtual ILocator Subscription => _page.GetByRole(AriaRole.Link, new() { NameString = "Subscriptions" });
+        public virtual ILocator ViewAllLogs => _page.GetByText("View All Logs");
 
 
         public async Task Click(ILocator locator)
