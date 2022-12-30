@@ -62,7 +62,7 @@ class Tests : BaseSetup
         await PeachForm.Click(PeachForm.PayNow);
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
-        await page.GetByText("Thank you for your purchase!").WaitForAsync();
+        await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
         var orderNumber = await page.TextContentAsync(SuccessPage.locator);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
@@ -76,11 +76,11 @@ class Tests : BaseSetup
         await page.WaitForLoadStateAsync();
         await Admin.WaitViewLinkLoaded(page);
         await Admin.OpenFirstViewLink(page);
-        var orderTitle = await page.TextContentAsync(".admin__page-section-item-title span");
+        var orderTitle = await Admin.OrderTitle(page);
         orderTitle.Should().Contain(orderNumber);
-        var status = await page.TextContentAsync("#order_status");
+        var status = await Admin.OrderStatus(page);
         Console.WriteLine(status);
-        status.Should().BeEquivalentTo("Processing");
+        status.Should().BeEquivalentTo(TestSettings.OrderStatus);
 
     }
 
@@ -145,13 +145,40 @@ class Tests : BaseSetup
         await page.WaitForLoadStateAsync();
         await Admin.WaitViewLinkLoaded(page);
         await Admin.OpenFirstViewLink(page);
-        //var orderTitle = await page.TextContentAsync(".admin__page-section-item-title span");
-        //orderTitle.Should().Contain(orderNumber);
-        //var status = await page.TextContentAsync("#order_status");
-        //Console.WriteLine(status);
-        //status.Should().BeEquivalentTo("Processing");
-
+        await Admin.Click(Admin.InvoicesMenu);
+        await Admin.Click(Admin.ViewLink);
+        await Admin.Click(Admin.CreditMemo);
+        var title = await Admin.CreditMemoPageTitle(page);
+        title.Should().Contain("New Memo");
+        await Admin.Click(Admin.QtyInputOnCreditMemoPageFirst);
+        await Admin.QtyInputOnCreditMemoPageFirst.ClearAsync();
+        await Admin.QtyInputOnCreditMemoPageFirst.BlurAsync();
+        await Admin.FillField(Admin.QtyInputOnCreditMemoPageFirst, "0");
+        await Admin.Click(Admin.UpdateQtyInput);
+        await Admin.Click(Admin.RefundButton);
+        await page.WaitForLoadStateAsync();
+        await Admin.Click(Admin.CreditMemosMenu);
+        await page.WaitForLoadStateAsync();
+        await page.WaitForTimeoutAsync(5000);
+        var recordsText = await Admin.Record(page);
+        recordsText.Should().Contain("1 records found");
+        await Admin.Click(Admin.InvoicesMenu);
+        await Admin.Click(Admin.ViewLink);
+        await Admin.Click(Admin.CreditMemo);
+        await Admin.Click(Admin.QtyInputOnCreditMemoPageLast);
+        await Admin.QtyInputOnCreditMemoPageLast.ClearAsync();
+        await Admin.QtyInputOnCreditMemoPageLast.BlurAsync();
+        await Admin.FillField(Admin.QtyInputOnCreditMemoPageLast, "0");
+        await Admin.Click(Admin.UpdateQtyInput);
+        await Admin.Click(Admin.RefundButton);
+        await page.WaitForLoadStateAsync();
+        await Admin.Click(Admin.CreditMemosMenu);
+        await page.WaitForLoadStateAsync();
+        await page.WaitForTimeoutAsync(5000);
+        var recordsText2 = await Admin.Record(page);
+        recordsText2.Should().Contain("2 records found");
     }
+
     [Test]
     public async Task OrderWithSubscriptionsForLoggedInCustomer()
     {
@@ -195,14 +222,14 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
-        //await Header.Click(Header.Menu);
-        //await Header.Click(Header.MyAccount);
-        //await MyAccount.Click(MyAccount.StoredPaymentMethods);
-        //await Assertion.Expect(MyAccount.CardNumber).ToContainTextAsync(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length-4));
-        // var list = await MyAccount.CardNumber.AllTextContentsAsync();
-        // var newList = list.Select(s => s.Replace("ending", "")).ToList();
-        // Console.WriteLine(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4));
-        // newList.Contains(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length-4)).Should().BeTrue();
+        await Header.Click(Header.Menu);
+        await Header.Click(Header.MyAccount);
+        await MyAccount.Click(MyAccount.StoredPaymentMethods);
+        //await Assertion.Expect(MyAccount.CardNumber).ToContainTextAsync(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4));
+        //var list = await MyAccount.CardNumber.AllTextContentsAsync();
+        //var newList = list.Select(s => s.Replace("ending", "")).ToList();
+        //Console.WriteLine(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4));
+        //newList.Contains(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4)).Should().BeTrue();
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);

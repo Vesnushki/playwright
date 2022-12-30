@@ -29,7 +29,9 @@ namespace PeachPayment
         public static string CustomerPassword { get; set; } = "roni_cost3@example.com";
         public static string AdminUserName { get; set; } = "magento";
         public static string AdminPassword { get; set; } = "Password1";
-
+        public static string OrderStatus { get; set; } = "Processing";
+        public static string OrderSuccessMessage { get; set; } = "Thank you for your purchase!";
+        
 
 
 

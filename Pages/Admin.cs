@@ -1,4 +1,5 @@
 ﻿using Microsoft.Playwright;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,18 @@ namespace PeachPayment.Pages
         public virtual ILocator Orders => _page.GetByRole(AriaRole.Link, new() { NameString = "Orders" });
         public virtual ILocator Subscription => _page.GetByRole(AriaRole.Link, new() { NameString = "Subscriptions" });
         public virtual ILocator ViewAllLogs => _page.GetByText("View All Logs");
+        public virtual ILocator InvoicesMenu => _page.GetByRole(AriaRole.Tab, new() { NameString = "Invoices" });
+        public virtual ILocator CreditMemosMenu => _page.GetByRole(AriaRole.Tab, new() { NameString = "Credit Memos" });
+        public virtual ILocator CreditMemo => _page.GetByRole(AriaRole.Button, new() { NameString = "Credit Memo" });
+        public virtual ILocator ViewLink => _page.GetByRole(AriaRole.Link, new() { NameString = "View" });
+        public virtual ILocator QtyInputOnCreditMemoPageFirst => _page.Locator(".col-qty input").First;
+        public virtual ILocator QtyInputOnCreditMemoPageLast => _page.Locator(".col-qty input").Last;
+        public virtual ILocator UpdateQtyInput => _page.GetByTitle("Update Qty's");
+        public virtual ILocator RefundButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Refund" }).Nth(1);
+        public virtual ILocator Records => _page.Locator("#sales_order_view_tabs_order_creditmemos_content > .admin__data-grid-outer-wrap > .admin__data-grid-header > div:nth-child(2) > .col-xs-10 > .row > .col-xs-3");
+
+
+
 
 
         public async Task Click(ILocator locator)
@@ -45,11 +58,30 @@ namespace PeachPayment.Pages
             await page.Locator("tbody tr:nth-child(1) a").First.ClickAsync();
         }
 
-        public async Task OrderTitle(IPage page)
+        public async Task<string?> OrderTitle(IPage page)
         {
-           await page.TextContentAsync(".admin__page-section-item-title span");
-
+            var orderTitle = await page.TextContentAsync(".admin__page-section-item-title span");
+            return orderTitle;
         }
+        public async Task<string?> OrderStatus(IPage page)
+        {
+            var orderStatus = await page.TextContentAsync("#order_status"); ;
+            return orderStatus;
+        }
+        public async Task<string?> CreditMemoPageTitle(IPage page)
+        {
+            var pageTitle = await page.TextContentAsync(".page-title"); ;
+            return pageTitle;
+        }
+
+        public async Task<string?> Record(IPage page)
+        {
+            var records = await page.TextContentAsync("#sales_order_view_tabs_order_creditmemos_content > .admin__data-grid-outer-wrap > .admin__data-grid-header > div:nth-child(2) > .col-xs-10 > .row > .col-xs-3>.admin__control-support-text");
+            return records;
+        }
+
+
+
 
     }
 }
