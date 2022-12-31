@@ -6,6 +6,7 @@ using FluentAssertions;
 using PlaywrightTests.Tests;
 using Microsoft.Playwright;
 using System.Text.RegularExpressions;
+using System.Security.Principal;
 
 namespace PeachPayment.Tests;
 
@@ -78,6 +79,74 @@ class Tests : BaseSetup
         await Admin.OpenFirstViewLink(page);
         var orderTitle = await Admin.OrderTitle(page);
         orderTitle.Should().Contain(orderNumber);
+        var status = await Admin.OrderStatus(page);
+        Console.WriteLine(status);
+        status.Should().BeEquivalentTo(TestSettings.OrderStatus);
+
+    }
+
+    [Test]
+    public async Task OrderStatusWhenUserCloseRedirectPage()
+    {
+        var page = await Context.NewPageAsync();
+        var LoginPage = new CustomerLogin(page);
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var PeachForm = new PeachForm(page);
+        var SuccessPage = new SuccessOrderPage(page);
+        var Assertion = new PlaywrightTest();
+        var Admin = new Admin(page);
+
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await ProductPage.Click(ProductPage.ConfigurableProduct);
+        await page.WaitForURLAsync(TestSettings.ConfigurableProductUrl);
+        await ProductPage.Click(ProductPage.ProductSize);
+        await ProductPage.Click(ProductPage.ProductColor);
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Click(Checkout.PayWithCardRedirectMethod);
+        await Checkout.Click(Checkout.ContinueButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
+        await PeachForm.Click(PeachForm.CardNumber);
+        await PeachForm.FillField(PeachForm.CardNumber, TestSettings.CreditCardNumber);
+        await PeachForm.Click(PeachForm.ExpireDate);
+        await PeachForm.FillField(PeachForm.ExpireDate, TestSettings.ExpiryDate);
+        await PeachForm.Click(PeachForm.CardHolder);
+        await PeachForm.FillField(PeachForm.CardHolder, TestSettings.CardHolder);
+        await page.Mouse.WheelAsync(0, 100);
+        await PeachForm.Click(PeachForm.CVV);
+        await PeachForm.FillField(PeachForm.CVV, TestSettings.CVV);
+        await PeachForm.Click(PeachForm.CardNumber);
+        await PeachForm.Click(PeachForm.PayNow);
+        Thread.Sleep(10000);
+        await page.CloseAsync(); 
+        await page.GotoAsync(TestSettings.AdminUrl);
+        await Admin.Click(Admin.UserName);
+        await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
+        await Admin.Click(Admin.Password);
+        await Admin.FillField(Admin.Password, TestSettings.AdminPassword);
+        await Admin.Click(Admin.SignIn);
+        await page.WaitForURLAsync(TestSettings.AdminDashboardUrl);
+        await Admin.Click(Admin.Sales);
+        await Admin.Click(Admin.Orders);
+        await page.WaitForLoadStateAsync();
+        await Admin.WaitViewLinkLoaded(page);
+        await Admin.OpenFirstViewLink(page);
+        //var orderTitle = await Admin.OrderTitle(page);
+        //orderTitle.Should().Contain(orderNumber);
         var status = await Admin.OrderStatus(page);
         Console.WriteLine(status);
         status.Should().BeEquivalentTo(TestSettings.OrderStatus);
