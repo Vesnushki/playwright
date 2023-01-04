@@ -35,10 +35,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await ProductPage.Click(ProductPage.ConfigurableProduct);
-        await page.WaitForURLAsync(TestSettings.ConfigurableProductUrl);
-        await ProductPage.Click(ProductPage.ProductSize);
-        await ProductPage.Click(ProductPage.ProductColor);
+        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -51,7 +49,7 @@ class Tests : BaseSetup
         await Checkout.Click(Checkout.ContinueButton);
         await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
         await PeachForm.Click(PeachForm.CardNumber);
-        await PeachForm.FillField(PeachForm.CardNumber, TestSettings.CreditCardNumber);
+        await PeachForm.CardNumber.TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
         await PeachForm.Click(PeachForm.ExpireDate);
         await PeachForm.FillField(PeachForm.ExpireDate, TestSettings.ExpiryDate);
         await PeachForm.Click(PeachForm.CardHolder);
@@ -59,7 +57,6 @@ class Tests : BaseSetup
         await page.Mouse.WheelAsync(0, 100);
         await PeachForm.Click(PeachForm.CVV);
         await PeachForm.FillField(PeachForm.CVV, TestSettings.CVV);
-        await PeachForm.Click(PeachForm.CardNumber);
         await PeachForm.Click(PeachForm.PayNow);
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
