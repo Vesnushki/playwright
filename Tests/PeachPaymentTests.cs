@@ -92,20 +92,15 @@ class Tests : BaseSetup
         var ShippingPage = new ShippingPage(page);
         var Checkout = new Checkout(page);
         var PeachForm = new PeachForm(page);
-        var SuccessPage = new SuccessOrderPage(page);
-        var Assertion = new PlaywrightTest();
-        var Admin = new Admin(page);
-
+        
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await ProductPage.Click(ProductPage.ConfigurableProduct);
-        await page.WaitForURLAsync(TestSettings.ConfigurableProductUrl);
-        await ProductPage.Click(ProductPage.ProductSize);
-        await ProductPage.Click(ProductPage.ProductColor);
+        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -118,7 +113,7 @@ class Tests : BaseSetup
         await Checkout.Click(Checkout.ContinueButton);
         await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
         await PeachForm.Click(PeachForm.CardNumber);
-        await PeachForm.FillField(PeachForm.CardNumber, TestSettings.CreditCardNumber);
+        await PeachForm.CardNumber.TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
         await PeachForm.Click(PeachForm.ExpireDate);
         await PeachForm.FillField(PeachForm.ExpireDate, TestSettings.ExpiryDate);
         await PeachForm.Click(PeachForm.CardHolder);
@@ -126,8 +121,9 @@ class Tests : BaseSetup
         await page.Mouse.WheelAsync(0, 100);
         await PeachForm.Click(PeachForm.CVV);
         await PeachForm.FillField(PeachForm.CVV, TestSettings.CVV);
-        await PeachForm.Click(PeachForm.CardNumber);
         await PeachForm.Click(PeachForm.PayNow);
+        await page.WaitForTimeoutAsync(1000);
+        await page.CloseAsync();
         var Context2 = await Browser.NewContextAsync();
         var Context2Page = await Context2.NewPageAsync();
         await Context2Page.GotoAsync(TestSettings.AdminUrl);
