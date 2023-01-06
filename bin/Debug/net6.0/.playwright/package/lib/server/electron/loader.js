@@ -19,6 +19,7 @@
 const {
   app
 } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const {
   chromiumSwitches
@@ -35,8 +36,33 @@ process.argv[1] = appPath;
 for (const arg of chromiumSwitches) {
   const match = arg.match(/--([^=]*)=?(.*)/);
   app.commandLine.appendSwitch(match[1], match[2]);
-  app.getAppPath = () => path.dirname(appPath);
 }
-globalThis.__playwright_run = () => {
-  require(appPath);
+
+// Defer ready event.
+const originalWhenReady = app.whenReady();
+const originalEmit = app.emit.bind(app);
+let readyEventArgs;
+app.emit = (event, ...args) => {
+  if (event === 'ready') {
+    readyEventArgs = args;
+    return app.listenerCount('ready') > 0;
+  }
+  return originalEmit(event, ...args);
+};
+app.getAppPath = () => {
+  if (fs.statSync(appPath).isFile()) return path.dirname(appPath);
+  return appPath;
+};
+let isReady = false;
+let whenReadyCallback;
+const whenReadyPromise = new Promise(f => whenReadyCallback = f);
+app.isReady = () => isReady;
+app.whenReady = () => whenReadyPromise;
+require(appPath);
+globalThis.__playwright_run = async () => {
+  // Wait for app to be ready to avoid browser initialization races.
+  const event = await originalWhenReady;
+  isReady = true;
+  whenReadyCallback(event);
+  originalEmit('ready', ...readyEventArgs);
 };

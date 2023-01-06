@@ -31,6 +31,13 @@ namespace PeachPayment
         public static string AdminPassword { get; set; } = "Password1";
         public static string OrderStatus { get; set; } = "Processing";
         public static string OrderSuccessMessage { get; set; } = "Thank you for your purchase!";
+        public static string GuestEmail { get; set; } = Faker.Internet.Email();
+        public static string GuestFirstName { get; set; } = Faker.Name.First();
+        public static string GuestLastName { get; set; } = Faker.Name.Last();
+        public static string GuestStreetAddress { get; set; } = Faker.Address.StreetAddress();
+        public static string GuestCity { get; set; } = Faker.Address.City();
+        public static string GuestZipCode { get; set; } = Faker.Address.ZipCode();
+        public static string GuestPhoneNumber { get; set; } = Faker.Phone.Number();
         
 
 

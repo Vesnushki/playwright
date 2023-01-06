@@ -61,6 +61,7 @@ class Browser extends _instrumentation.SdkObject {
         needsReset: false
       };
     }
+    await this._contextForReuse.context.stopPendingOperations();
     return {
       context: this._contextForReuse.context,
       needsReset: true

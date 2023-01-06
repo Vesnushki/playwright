@@ -250,8 +250,6 @@ class Tests : BaseSetup
         var ShippingPage = new ShippingPage(page);
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
-        var Header = new MagentoHeader(page);
-        var MyAccount = new MyAccount(page);
         var Admin = new Admin(page);
 
         await page.GotoAsync(TestSettings.EnvUrl);
@@ -302,6 +300,76 @@ class Tests : BaseSetup
         await Admin.Click(Admin.BillNow);
         var numbers = await Admin.TimesBilled(page);
         Console.WriteLine(numbers); 
+        numbers.Should().BeEquivalentTo("2");
+
+    }
+
+    [Test]
+    public async Task OrderWithSubscriptionsForGuest()
+    {
+        var page = await Context.NewPageAsync();
+        var LoginPage = new CustomerLogin(page);
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var Assertion = new PlaywrightTest();
+        var Admin = new Admin(page);
+
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.SubscriptionProductUrl);
+        await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Click(ShippingPage.EmailField);
+        await ShippingPage.FillField(ShippingPage.EmailField, TestSettings.GuestEmail);
+        await ShippingPage.Click(ShippingPage.FirstName);
+        await ShippingPage.FillField(ShippingPage.FirstName, TestSettings.GuestFirstName);
+        await ShippingPage.Click(ShippingPage.LastName);
+        await ShippingPage.FillField(ShippingPage.LastName, TestSettings.GuestLastName);
+        await ShippingPage.Click(ShippingPage.StreetAddress);
+        await ShippingPage.FillField(ShippingPage.StreetAddress, TestSettings.GuestStreetAddress);
+        await ShippingPage.SelectByValue(ShippingPage.State, "1");
+        await ShippingPage.Click(ShippingPage.City);
+        await ShippingPage.FillField(ShippingPage.City,TestSettings.GuestCity);
+        await ShippingPage.Click(ShippingPage.PostCode);
+        await ShippingPage.FillField(ShippingPage.PostCode, TestSettings.GuestZipCode);
+        await ShippingPage.Click(ShippingPage.PhoneNumber);
+        await ShippingPage.FillField(ShippingPage.PhoneNumber,TestSettings.GuestPhoneNumber);    
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Click(Checkout.PayAndSaveNewCartMethod);
+        await Checkout.Click(Checkout.GetCardNumber());
+        await Checkout.GetCardNumber().TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
+        await Checkout.Click(Checkout.ExpiryDate);
+        await Checkout.FillField(Checkout.ExpiryDate, TestSettings.ExpiryDate);
+        await Checkout.Click(Checkout.CardHolder);
+        await Checkout.FillField(Checkout.CardHolder, TestSettings.CardHolder);
+        await Checkout.Click(Checkout.CVV);
+        await Checkout.FillField(Checkout.CVV, TestSettings.CVV);
+        await Checkout.Click(Checkout.PayNowButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
+        await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
+        await page.GetByText("Thank you for your purchase!").WaitForAsync();
+        await page.GotoAsync(TestSettings.AdminUrl);
+        await Admin.Click(Admin.UserName);
+        await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
+        await Admin.Click(Admin.Password);
+        await Admin.FillField(Admin.Password, TestSettings.AdminPassword);
+        await Admin.Click(Admin.SignIn);
+        await page.WaitForURLAsync(TestSettings.AdminDashboardUrl);
+        await Admin.Click(Admin.Sales);
+        await Admin.Click(Admin.Subscription);
+        await Admin.Click(Admin.ViewAllLogs);
+        await Admin.Click(Admin.ViewLink.First);
+        await Admin.Click(Admin.BillNow);
+        var numbers = await Admin.TimesBilled(page);
+        Console.WriteLine(numbers);
         numbers.Should().BeEquivalentTo("2");
 
     }

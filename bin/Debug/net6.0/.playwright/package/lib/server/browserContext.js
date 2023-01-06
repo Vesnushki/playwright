@@ -49,6 +49,7 @@ class BrowserContext extends _instrumentation.SdkObject {
     super(browser, 'browser-context');
     this._timeoutSettings = new _timeoutSettings.TimeoutSettings();
     this._pageBindings = new Map();
+    this._activeProgressControllers = new Set();
     this._options = void 0;
     this._requestInterceptor = void 0;
     this._isPersistentContext = void 0;
@@ -69,6 +70,7 @@ class BrowserContext extends _instrumentation.SdkObject {
     this._settingStorageState = false;
     this.initScripts = [];
     this._routesInFlight = new Set();
+    this._debugger = void 0;
     this.attribution.context = this;
     this._browser = browser;
     this._options = options;
@@ -92,7 +94,7 @@ class BrowserContext extends _instrumentation.SdkObject {
   async _initialize() {
     if (this.attribution.isInternalPlaywright) return;
     // Debugger will pause execution upon page.pause in headed mode.
-    const contextDebugger = new _debugger.Debugger(this);
+    this._debugger = new _debugger.Debugger(this);
 
     // When PWDEBUG=1, show inspector for each context.
     if ((0, _utils.debugMode)() === 'inspector') await _recorder.Recorder.show(this, {
@@ -100,13 +102,16 @@ class BrowserContext extends _instrumentation.SdkObject {
     });
 
     // When paused, show inspector.
-    if (contextDebugger.isPaused()) _recorder.Recorder.showInspector(this);
-    contextDebugger.on(_debugger.Debugger.Events.PausedStateChanged, () => {
+    if (this._debugger.isPaused()) _recorder.Recorder.showInspector(this);
+    this._debugger.on(_debugger.Debugger.Events.PausedStateChanged, () => {
       _recorder.Recorder.showInspector(this);
     });
     if ((0, _utils.debugMode)() === 'console') await this.extendInjectedScript(consoleApiSource.source);
     if (this._options.serviceWorkers === 'block') await this.addInitScript(`\nnavigator.serviceWorker.register = () => { console.warn('Service Worker registration blocked by Playwright'); };\n`);
     if (this._options.permissions) await this.grantPermissions(this._options.permissions);
+  }
+  debugger() {
+    return this._debugger;
   }
   async _ensureVideosPath() {
     if (this._options.recordVideo) await (0, _fileUtils.mkdirIfNeeded)(_path.default.join(this._options.recordVideo.dir, 'dummy'));
@@ -114,6 +119,9 @@ class BrowserContext extends _instrumentation.SdkObject {
   canResetForReuse() {
     if (this._closedStatus !== 'open') return false;
     return true;
+  }
+  async stopPendingOperations() {
+    for (const controller of this._activeProgressControllers) controller.abort(new Error(`Context was reset for reuse.`));
   }
   static reusableContextHash(params) {
     const paramsCopy = {
@@ -519,7 +527,6 @@ function validateBrowserContextOptions(options, browserOptions) {
     if (!browserOptions.proxy && browserOptions.isChromium && os.platform() === 'win32') throw new Error(`Browser needs to be launched with the global proxy. If all contexts override the proxy, global proxy will be never used and can be any string, for example "launch({ proxy: { server: 'http://per-context' } })"`);
     options.proxy = normalizeProxySettings(options.proxy);
   }
-  if ((0, _utils.debugMode)() === 'inspector') options.bypassCSP = true;
   verifyGeolocation(options.geolocation);
 }
 function verifyGeolocation(geolocation) {

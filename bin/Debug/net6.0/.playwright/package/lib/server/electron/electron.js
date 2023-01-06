@@ -72,7 +72,7 @@ class ElectronApplication extends _instrumentation.SdkObject {
       const electronHandle = await this._nodeElectronHandlePromise;
       await electronHandle.evaluate(({
         app
-      }) => app.quit());
+      }) => app.quit()).catch(() => {});
     });
   }
   async initialize() {
