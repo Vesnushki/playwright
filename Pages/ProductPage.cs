@@ -20,7 +20,7 @@ namespace PeachPayment.Pages
         public virtual ILocator ProductColor => _page.GetByRole(AriaRole.Option, new() { NameString = "Blue" });
         public virtual ILocator AddToCartButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Add to Cart" });
         public virtual ILocator ShoppingCart => _page.GetByRole(AriaRole.Link, new() { NameString = "shopping cart" });
-        public virtual ILocator SubscriptionProduct => _page.GetByLabel("Subscription");
+        public virtual ILocator SubscriptionProduct => _page.Locator("#select_6");
 
         public async Task Click(ILocator locator)
         {

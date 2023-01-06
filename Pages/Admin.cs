@@ -32,7 +32,8 @@ namespace PeachPayment.Pages
         public virtual ILocator UpdateQtyInput => _page.GetByTitle("Update Qty's");
         public virtual ILocator RefundButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Refund" }).Nth(1);
         public virtual ILocator Records => _page.Locator("#sales_order_view_tabs_order_creditmemos_content > .admin__data-grid-outer-wrap > .admin__data-grid-header > div:nth-child(2) > .col-xs-10 > .row > .col-xs-3");
-
+        public virtual ILocator BillNow => _page.GetByTitle("Bill Now");
+        public virtual ILocator ViewLinkSubscribtion => _page.Locator("a.action-menu-item");
 
 
 
@@ -80,6 +81,11 @@ namespace PeachPayment.Pages
             return records;
         }
 
+        public async Task<string?> TimesBilled(IPage page)
+        {
+            var records = await page.TextContentAsync(".field-run_count .control-value");
+            return records;
+        }
 
 
 

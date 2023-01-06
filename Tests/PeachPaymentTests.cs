@@ -261,7 +261,7 @@ class Tests : BaseSetup
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
-        await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "15");
+        await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -283,9 +283,6 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
-        await Header.Click(Header.Menu);
-        await Header.Click(Header.MyAccount);
-        await MyAccount.Click(MyAccount.StoredPaymentMethods);
         //await Assertion.Expect(MyAccount.CardNumber).ToContainTextAsync(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4));
         //var list = await MyAccount.CardNumber.AllTextContentsAsync();
         //var newList = list.Select(s => s.Replace("ending", "")).ToList();
@@ -301,7 +298,11 @@ class Tests : BaseSetup
         await Admin.Click(Admin.Sales);
         await Admin.Click(Admin.Subscription);
         await Admin.Click(Admin.ViewAllLogs);
-
+        await Admin.Click(Admin.ViewLink.First);
+        await Admin.Click(Admin.BillNow);
+        var numbers = await Admin.TimesBilled(page);
+        Console.WriteLine(numbers); 
+        numbers.Should().BeEquivalentTo("2");
 
     }
 }
