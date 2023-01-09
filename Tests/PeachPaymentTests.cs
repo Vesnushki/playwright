@@ -422,6 +422,43 @@ class Tests : BaseSetup
         numbers.Should().BeEquivalentTo("2");
 
     }
+
+    [Test]
+    public async Task OrderWithSimpleProductAndSavedCCPaymentMethod()
+    {
+        var page = await Context.NewPageAsync();
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var Assertion = new PlaywrightTest();
+        var Admin = new Admin(page);
+        var LoginPage = new CustomerLogin(page);
+
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.SimpleSecondProductUrl);
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Check(Checkout.PayWithSavedCartPaymentMethod);
+        await Checkout.Click(Checkout.PlaceOrder);
+        await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
+        await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
+        await page.GetByText("Thank you for your purchase!").WaitForAsync();
+        
+    }
 }
 
 
