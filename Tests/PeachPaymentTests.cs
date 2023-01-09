@@ -155,7 +155,6 @@ class Tests : BaseSetup
         var ShippingPage = new ShippingPage(page);
         var Checkout = new Checkout(page);
         var PeachForm = new PeachForm(page);
-        var SuccessPage = new SuccessOrderPage(page);
         var Admin = new Admin(page);
         var Assertion = new PlaywrightTest();
 
@@ -193,7 +192,6 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
-        var orderNumber = await page.TextContentAsync(SuccessPage.locator);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -308,7 +306,6 @@ class Tests : BaseSetup
     public async Task OrderWithSubscriptionsForGuest()
     {
         var page = await Context.NewPageAsync();
-        var LoginPage = new CustomerLogin(page);
         var ProductPage = new ProductPage(page);
         var ShoppingCart = new ShoppingCart(page);
         var ShippingPage = new ShippingPage(page);
@@ -353,6 +350,58 @@ class Tests : BaseSetup
         await Checkout.Click(Checkout.CVV);
         await Checkout.FillField(Checkout.CVV, TestSettings.CVV);
         await Checkout.Click(Checkout.PayNowButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
+        await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
+        await page.GetByText("Thank you for your purchase!").WaitForAsync();
+        await page.GotoAsync(TestSettings.AdminUrl);
+        await Admin.Click(Admin.UserName);
+        await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
+        await Admin.Click(Admin.Password);
+        await Admin.FillField(Admin.Password, TestSettings.AdminPassword);
+        await Admin.Click(Admin.SignIn);
+        await page.WaitForURLAsync(TestSettings.AdminDashboardUrl);
+        await Admin.Click(Admin.Sales);
+        await Admin.Click(Admin.Subscription);
+        await Admin.Click(Admin.ViewAllLogs);
+        await Admin.Click(Admin.ViewLink.First);
+        await Admin.Click(Admin.BillNow);
+        var numbers = await Admin.TimesBilled(page);
+        Console.WriteLine(numbers);
+        numbers.Should().BeEquivalentTo("2");
+
+    }
+
+    [Test]
+    public async Task OrderWithSubscribtionProductAndSavedCCPaymentMethod()
+    {
+        var page = await Context.NewPageAsync();
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var Assertion = new PlaywrightTest();
+        var Admin = new Admin(page);
+        var LoginPage = new CustomerLogin(page);
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.SubscriptionProductUrl);
+        await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Check(Checkout.PayWithSavedCartPaymentMethod);
+        await Checkout.Click(Checkout.PlaceOrder);
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
