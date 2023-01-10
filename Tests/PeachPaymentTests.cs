@@ -7,6 +7,7 @@ using PlaywrightTests.Tests;
 using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 using System.Security.Principal;
+using static Faker.Finance;
 
 namespace PeachPayment.Tests;
 
@@ -432,7 +433,6 @@ class Tests : BaseSetup
         var ShippingPage = new ShippingPage(page);
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
-        var Admin = new Admin(page);
         var LoginPage = new CustomerLogin(page);
 
         await page.GotoAsync(TestSettings.EnvUrl);
@@ -459,6 +459,35 @@ class Tests : BaseSetup
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
         
     }
+
+
+    [Test]
+    public async Task RemovalOfSavedCreditCards()
+    {
+        var page = await Context.NewPageAsync();
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var Assertion = new PlaywrightTest();
+        var LoginPage = new CustomerLogin(page);
+        var Header = new MagentoHeader(page);
+        var MyAccount = new MyAccount(page);
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await Header.Click(Header.Menu);
+        await Header.Click(Header.MyAccount);
+        await MyAccount.Click(MyAccount.StoredPaymentMethods);
+        var qtyOfCCBeforeRemove = MyAccount.DeleteCreditCard.CountAsync();
+        await MyAccount.Click(MyAccount.DeleteCreditCard.First);
+        Thread.Sleep(10000);
+       
+    }
+
 }
 
 

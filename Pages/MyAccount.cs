@@ -18,6 +18,7 @@ namespace PeachPayment.Pages
 
         public virtual ILocator StoredPaymentMethods => _page.GetByText("Stored Payment Methods");
         public virtual ILocator CardNumber => _page.Locator("td.col.card-number");
+        public virtual ILocator DeleteCreditCard => _page.GetByText("Delete");
 
 
         public async Task Click(ILocator locator)
