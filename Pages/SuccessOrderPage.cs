@@ -15,7 +15,7 @@ namespace PeachPayment.Pages
         {
             _page = page;
         }
-        public virtual string locator  => ".order-number strong";
-
+        public virtual string locator => ".order-number strong";
+        public virtual string OrderNumber => ".checkout-success p span:nth-child(1)";
     }
 }
