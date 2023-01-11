@@ -34,6 +34,8 @@ namespace PeachPayment.Pages
         public virtual ILocator Records => _page.Locator("#sales_order_view_tabs_order_creditmemos_content > .admin__data-grid-outer-wrap > .admin__data-grid-header > div:nth-child(2) > .col-xs-10 > .row > .col-xs-3");
         public virtual ILocator BillNow => _page.GetByTitle("Bill Now");
         public virtual ILocator ViewLinkSubscribtion => _page.Locator("a.action-menu-item");
+        public virtual ILocator CapturedAmount => _page.Locator(".note-list-item:nth-child(2) .note-list-comment");
+        
 
 
 
