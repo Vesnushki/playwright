@@ -35,7 +35,9 @@ namespace PeachPayment.Pages
         public virtual ILocator BillNow => _page.GetByTitle("Bill Now");
         public virtual ILocator ViewLinkSubscribtion => _page.Locator("a.action-menu-item");
         public virtual ILocator CapturedAmount => _page.Locator(".note-list-item:nth-child(2) .note-list-comment");
-        
+        public virtual ILocator CapturedAmount2 => _page.Locator(".note-list-comment");
+
+
 
 
 
