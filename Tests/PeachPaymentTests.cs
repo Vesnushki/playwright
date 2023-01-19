@@ -62,7 +62,7 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-        var orderNumber = await page.TextContentAsync(SuccessPage.locator);
+        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -544,7 +544,7 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
+        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumberGuest);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -565,7 +565,7 @@ class Tests : BaseSetup
     }
 
     [Test]
-    public async Task LoggedInCustomerOrderWithDiscountCode()
+    public async Task LoggedInCustomerOrderWithSimpleProductAndDiscountCode()
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -618,7 +618,7 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-        var orderNumber = await page.TextContentAsync(SuccessPage.locator);
+        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -691,7 +691,7 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-        var orderNumber = await page.TextContentAsync(SuccessPage.locator);
+        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -710,7 +710,7 @@ class Tests : BaseSetup
 
     }
     [Test]
-    public async Task LoggedInCustomerCheckoutWithSimpleAndSubsProductsAndDiscountCodeAndSavedCard()
+    public async Task LoggedInCustomerCheckoutWithSimpleAndSubsProductsAndDiscountCodeAndSavedCard()//need to doublecheck
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -753,7 +753,7 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-        var orderNumber = await page.TextContentAsync(SuccessPage.locator);
+        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -770,8 +770,95 @@ class Tests : BaseSetup
         Console.WriteLine(capturedAmount);
         capturedAmount.Should().NotContain(orderTotal);
 
+    }
+
+    [Test]
+    public async Task GuestOrderWithSimpleProductAndDiscountCodeAndCardRedirect()
+    {
+        var page = await Context.NewPageAsync();
+        var LoginPage = new CustomerLogin(page);
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var PeachForm = new PeachForm(page);
+        var SuccessPage = new SuccessOrderPage(page);
+        var Assertion = new PlaywrightTest();
+        var Admin = new Admin(page);
+
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Click(ShippingPage.EmailField);
+        await ShippingPage.FillField(ShippingPage.EmailField, TestSettings.GuestEmail);
+        await ShippingPage.Click(ShippingPage.FirstName);
+        await ShippingPage.FillField(ShippingPage.FirstName, TestSettings.GuestFirstName);
+        await ShippingPage.Click(ShippingPage.LastName);
+        await ShippingPage.FillField(ShippingPage.LastName, TestSettings.GuestLastName);
+        await ShippingPage.Click(ShippingPage.StreetAddress);
+        await ShippingPage.FillField(ShippingPage.StreetAddress, TestSettings.GuestStreetAddress);
+        await ShippingPage.SelectByValue(ShippingPage.State, "1");
+        await ShippingPage.Click(ShippingPage.City);
+        await ShippingPage.FillField(ShippingPage.City, TestSettings.GuestCity);
+        await ShippingPage.Click(ShippingPage.PostCode);
+        await ShippingPage.FillField(ShippingPage.PostCode, TestSettings.GuestZipCode);
+        await ShippingPage.Click(ShippingPage.PhoneNumber);
+        await ShippingPage.FillField(ShippingPage.PhoneNumber, TestSettings.GuestPhoneNumber);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        var orderTotal = await Checkout.OrderTotal.TextContentAsync();
+        Console.WriteLine("OrderTotal" + orderTotal);
+        await Checkout.ApplyDiscountCodeLink.ClickAsync();
+        await Checkout.FillField(Checkout.DiscountField, "START");
+        await Checkout.Click(Checkout.DiscountButton);
+        await page.WaitForTimeoutAsync(2000);
+        var orderTotalAfterDiscount = await Checkout.OrderTotal.TextContentAsync();
+        Console.WriteLine("After discount" + orderTotalAfterDiscount);
+        await Checkout.Click(Checkout.PayWithCardRedirectMethod);
+        await Checkout.Click(Checkout.ContinueButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
+        await PeachForm.Click(PeachForm.CardNumber);
+        await PeachForm.CardNumber.TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
+        await PeachForm.Click(PeachForm.ExpireDate);
+        await PeachForm.FillField(PeachForm.ExpireDate, TestSettings.ExpiryDate);
+        await PeachForm.Click(PeachForm.CardHolder);
+        await PeachForm.FillField(PeachForm.CardHolder, TestSettings.CardHolder);
+        await page.Mouse.WheelAsync(0, 100);
+        await PeachForm.Click(PeachForm.CVV);
+        await PeachForm.FillField(PeachForm.CVV, TestSettings.CVV);
+        await PeachForm.Click(PeachForm.PayNow);
+        await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
+        await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
+        await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
+        var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumberGuest);
+        Console.WriteLine(orderNumber);
+        await page.GotoAsync(TestSettings.AdminUrl);
+        await Admin.Click(Admin.UserName);
+        await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
+        await Admin.Click(Admin.Password);
+        await Admin.FillField(Admin.Password, TestSettings.AdminPassword);
+        await Admin.Click(Admin.SignIn);
+        await page.WaitForURLAsync(TestSettings.AdminDashboardUrl);
+        await Admin.Click(Admin.Sales);
+        await Admin.Click(Admin.Orders);
+        await page.WaitForLoadStateAsync();
+        await Admin.WaitViewLinkLoaded(page);
+        await Admin.OpenFirstViewLink(page);
+        var orderTitle = await Admin.OrderTitle(page);
+        orderTitle.Should().Contain(orderNumber);
+        var capturedAmount = await Admin.CapturedAmount.TextContentAsync();
+        Console.WriteLine(capturedAmount);
+        capturedAmount.Should().NotContain(orderTotal);
 
     }
+
+
 
 }
 

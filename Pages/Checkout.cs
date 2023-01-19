@@ -17,7 +17,7 @@ namespace PeachPayment.Pages
         }
         public virtual ILocator PayWithCardRedirectMethod => _page.GetByLabel("Pay with Card (Redirect)");
         public virtual ILocator PayAndSaveNewCartMethod => _page.GetByLabel("Pay and save New Card");
-        public virtual ILocator PayWithSavedCartPaymentMethod => _page.Locator("#peachpayments_server_to_server_vault_149");
+        public virtual ILocator PayWithSavedCartPaymentMethod => _page.Locator("#peachpayments_server_to_server_vault_160");
         public virtual ILocator ContinueButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Continue to payment" });
 
         public virtual ILocator GetCardNumber()
