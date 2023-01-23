@@ -4,10 +4,6 @@ using PeachPayment.Pages;
 using PlaywrightTests.Pages;
 using FluentAssertions;
 using PlaywrightTests.Tests;
-using Microsoft.Playwright;
-using System.Text.RegularExpressions;
-using System.Security.Principal;
-using static Faker.Finance;
 
 namespace PeachPayment.Tests;
 
@@ -459,17 +455,48 @@ class Tests : BaseSetup
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
         
     }
+    [Test]
+    public async Task AddingNewCard()
+    {
+        var page = await Context.NewPageAsync();
+        var LoginPage = new CustomerLogin(page);
+        var Header = new MagentoHeader(page);
+        var MyAccount = new MyAccount(page);
+        var Checkout = new Checkout(page);
+        var Assertion = new PlaywrightTest();
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await Header.Click(Header.Menu);
+        await Header.Click(Header.MyAccount);
+        await MyAccount.Click(MyAccount.StoredPaymentMethods);
+        await page.WaitForLoadStateAsync();
+        var qtyOfCCBefore = MyAccount.DeleteCreditCard.CountAsync();
+        await MyAccount.Click(MyAccount.AddCreditCard);
+        await page.WaitForLoadStateAsync();
+        await Checkout.Click(Checkout.GetCardNumber());
+        await Checkout.GetCardNumber().TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
+        await Checkout.Click(Checkout.ExpiryDate);
+        await Checkout.FillField(Checkout.ExpiryDate, TestSettings.ExpiryDate);
+        await Checkout.Click(Checkout.CardHolder);
+        await Checkout.FillField(Checkout.CardHolder, TestSettings.CardHolder);
+        await Checkout.Click(Checkout.CVV);
+        await Checkout.FillField(Checkout.CVV, TestSettings.CVV);
+        await Checkout.Click(Checkout.AddNewCard);
+        await Assertion.Expect(MyAccount.SavedCardSuccessMessage).ToBeVisibleAsync();
+        var qtyOfCCAfter = MyAccount.DeleteCreditCard.CountAsync();
+        (qtyOfCCAfter != qtyOfCCBefore).Should().BeTrue();
 
+
+    }
 
     [Test]
     public async Task RemovalOfSavedCreditCards() // need to solve why popup doesn't appear while deleting
     {
         var page = await Context.NewPageAsync();
-        var ProductPage = new ProductPage(page);
-        var ShoppingCart = new ShoppingCart(page);
-        var ShippingPage = new ShippingPage(page);
-        var Checkout = new Checkout(page);
-        var Assertion = new PlaywrightTest();
         var LoginPage = new CustomerLogin(page);
         var Header = new MagentoHeader(page);
         var MyAccount = new MyAccount(page);
@@ -483,8 +510,8 @@ class Tests : BaseSetup
         await Header.Click(Header.MyAccount);
         await MyAccount.Click(MyAccount.StoredPaymentMethods);
         var qtyOfCCBeforeRemove = MyAccount.DeleteCreditCard.CountAsync();
+        await page.WaitForLoadStateAsync();
         await MyAccount.Click(MyAccount.DeleteCreditCard.First);
-        Thread.Sleep(10000);
        
     }
 
@@ -933,9 +960,13 @@ class Tests : BaseSetup
         Console.WriteLine(capturedAmount);
         capturedAmount.Should().NotContain(orderTotal);
     }
+    //[Test]
+    //public async Task LoggedInUserReInitiatesCheckoutAfterCancel()
+    //{
 
+    //}
 
-
+       
 }
 
 

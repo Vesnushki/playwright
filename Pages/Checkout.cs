@@ -35,7 +35,8 @@ namespace PeachPayment.Pages
         public virtual ILocator OrderTotal => _page.Locator(".grand .price");
         public virtual ILocator DiscountField => _page.Locator("#discount-code");
         public virtual ILocator DiscountButton => _page.Locator("button.action.action-apply");
-        
+        public virtual ILocator AddNewCard => _page.FrameLocator("iframe").Locator("button[aria-label='Add New Card']");
+    
 
 
         public async Task Click(ILocator locator)
