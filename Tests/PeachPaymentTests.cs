@@ -32,8 +32,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -96,8 +96,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -161,7 +161,7 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SimpleSecondProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -413,6 +413,7 @@ class Tests : BaseSetup
         await Admin.Click(Admin.Subscription);
         await Admin.Click(Admin.ViewAllLogs);
         await Admin.Click(Admin.ViewLink.First);
+        await page.WaitForLoadStateAsync();
         await Admin.Click(Admin.BillNow);
         var numbers = await Admin.TimesBilled(page);
         Console.WriteLine(numbers);
@@ -430,7 +431,6 @@ class Tests : BaseSetup
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
         var LoginPage = new CustomerLogin(page);
-
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
@@ -439,7 +439,7 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.EnvUrl);
         await page.GotoAsync(TestSettings.EnvUrl);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleSecondProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -448,15 +448,16 @@ class Tests : BaseSetup
         await ShippingPage.Check(ShippingPage.ShippingMethod);
         await ShippingPage.Click(ShippingPage.NextButton);
         await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await page.WaitForLoadStateAsync();
         await Checkout.Check(Checkout.PayWithSavedCartPaymentMethod);//need to add test attribute
         await Checkout.Click(Checkout.PlaceOrder);
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
-        
+
     }
     [Test]
-    public async Task AddingNewCard()
+    public async Task AddingNewCard()//need to solve issue with card set 
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -473,6 +474,17 @@ class Tests : BaseSetup
         await Header.Click(Header.Menu);
         await Header.Click(Header.MyAccount);
         await MyAccount.Click(MyAccount.StoredPaymentMethods);
+        var list = await MyAccount.DeleteCreditCard.AllAsync();
+        if (list != null)
+        {
+            foreach (var creditCard in list) {
+                await page.WaitForLoadStateAsync();
+                await creditCard.ClickAsync();
+                await page.WaitForLoadStateAsync();
+                await MyAccount.Click(MyAccount.DeleteCreditCardButton);
+            }
+            
+        }
         await page.WaitForLoadStateAsync();
         var qtyOfCCBefore = MyAccount.DeleteCreditCard.CountAsync();
         await MyAccount.Click(MyAccount.AddCreditCard);
@@ -494,7 +506,7 @@ class Tests : BaseSetup
     }
 
     [Test]
-    public async Task RemovalOfSavedCreditCards() // need to solve why popup doesn't appear while deleting
+    public async Task RemovalOfSavedCreditCards() 
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -530,7 +542,7 @@ class Tests : BaseSetup
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -611,8 +623,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -667,7 +679,7 @@ class Tests : BaseSetup
     }
 
     [Test]
-    public async Task LoggedInCustomerCheckoutWithSimpleAndSubscriptionProductsAndDiscountCode()
+    public async Task LoggedInCustomerCheckoutWithSimpleAndSubscriptionProductsAndDiscountCodeEmbeddedPM()
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -685,8 +697,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
@@ -755,8 +767,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
@@ -769,6 +781,7 @@ class Tests : BaseSetup
         await ShippingPage.Click(ShippingPage.NextButton);
         await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
         var orderTotal = await Checkout.OrderTotal.TextContentAsync();
+        Console.WriteLine(orderTotal);
         await Checkout.ApplyDiscountCodeLink.ClickAsync();
         await Checkout.FillField(Checkout.DiscountField, "START");
         await Checkout.Click(Checkout.DiscountButton);
@@ -813,8 +826,8 @@ class Tests : BaseSetup
         var Admin = new Admin(page);
 
         await page.GotoAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
@@ -895,8 +908,8 @@ class Tests : BaseSetup
         var Admin = new Admin(page);
 
         await page.GotoAsync(TestSettings.EnvUrl);
-        await page.GotoAsync(TestSettings.SimpleFisrtProductUrl);
-        await page.WaitForURLAsync(TestSettings.SimpleFisrtProductUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");

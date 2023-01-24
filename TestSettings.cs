@@ -12,7 +12,7 @@ namespace PeachPayment
         public static string EnvUrl { get; set; } = "https://magento.x2y.dev/";
         public static string AdminUrl { get; set; } = "https://magento.x2y.dev/admin";
         public static string ConfigurableProductUrl { get; set; } = "https://magento.x2y.dev/radiant-tee.html";
-        public static string SimpleFisrtProductUrl { get; set; } = "https://magento.x2y.dev/push-it-messenger-bag.html";
+        public static string SimpleFirstProductUrl { get; set; } = "https://magento.x2y.dev/push-it-messenger-bag.html";
         public static string SimpleSecondProductUrl { get; set; } = "https://magento.x2y.dev/dash-digital-watch.html";
         public static string SubscriptionProductUrl { get; set; } = "https://magento.x2y.dev/compete-track-tote.html";
         public static string CheckoutCartUrl { get; set; } = "https://magento.x2y.dev/checkout/cart/";
@@ -21,7 +21,7 @@ namespace PeachPayment
         public static string CheckoutRedirect { get; set; } = "https://testsecure.peachpayments.com/checkout";
         public static string CheckoutSuccess { get; set; } = "https://magento.x2y.dev/checkout/onepage/success/";
         public static string AdminDashboardUrl { get; set; } = "https://magento.x2y.dev/admin/admin/dashboard/";
-        public static string CreditCardNumber { get; set; } = "5111010030175156";
+        public static string CreditCardNumber { get; set; } = "5200828282828210";
         public static string ExpiryDate { get; set; } = "12 / 28";
         public static string CardHolder { get; set; } = Faker.Name.FullName();
         public static string CVV { get; set; } = "123";
@@ -38,10 +38,7 @@ namespace PeachPayment
         public static string GuestCity { get; set; } = Faker.Address.City();
         public static string GuestZipCode { get; set; } = Faker.Address.ZipCode();
         public static string GuestPhoneNumber { get; set; } = Faker.Phone.Number();
-        
-
-
-
+            
     }
     
 }
