@@ -973,13 +973,77 @@ class Tests : BaseSetup
         Console.WriteLine(capturedAmount);
         capturedAmount.Should().NotContain(orderTotal);
     }
-    //[Test]
-    //public async Task LoggedInUserReInitiatesCheckoutAfterCancel()
-    //{
+   
+    [Test]
+    public async Task LoggedInUserReInitiatesCheckoutAfterCancel()
+    {
+        var page = await Context.NewPageAsync();
+        var LoginPage = new CustomerLogin(page);
+        var ProductPage = new ProductPage(page);
+        var ShoppingCart = new ShoppingCart(page);
+        var ShippingPage = new ShippingPage(page);
+        var Checkout = new Checkout(page);
+        var PeachForm = new PeachForm(page);
+        var SuccessPage = new SuccessOrderPage(page);
+        var Assertion = new PlaywrightTest();
+        var Admin = new Admin(page);
 
-    //}
+        await page.GotoAsync(TestSettings.EnvUrl);
+        await LoginPage.Click(LoginPage.SignInLink);
+        await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
+        await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
+        await LoginPage.Click(LoginPage.SignInButton);
+        await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
+        await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
+        await ProductPage.Click(ProductPage.AddToCartButton);
+        await ProductPage.Click(ProductPage.ShoppingCart);
+        await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Click(Checkout.PayWithCardRedirectMethod);
+        await Checkout.Click(Checkout.ContinueButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
+        await PeachForm.Click(PeachForm.CancelButton);
+        await PeachForm.Click(PeachForm.CancelButtonPopup);
+        await page.WaitForURLAsync(TestSettings.ShoppingCartURL);
+        await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
+        await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
+        await ShippingPage.Check(ShippingPage.ShippingMethod);
+        await ShippingPage.Click(ShippingPage.NextButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
+        await Checkout.Click(Checkout.CheckMoneyOrder);
+        await Checkout.Click(Checkout.PlaceOrder);
+        await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
+        await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
+        await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
+       // var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
+        //await page.GotoAsync(TestSettings.AdminUrl);
+        //await Admin.Click(Admin.UserName);
+        //await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
+        //await Admin.Click(Admin.Password);
+        //await Admin.FillField(Admin.Password, TestSettings.AdminPassword);
+        //await Admin.Click(Admin.SignIn);
+        //await page.WaitForURLAsync(TestSettings.AdminDashboardUrl);
+        //await Admin.Click(Admin.Sales);
+        //await Admin.Click(Admin.Orders);
+        //await page.WaitForLoadStateAsync();
+        //await Admin.WaitViewLinkLoaded(page);
+        //await Admin.OpenFirstViewLink(page);
+        //var orderTitle = await Admin.OrderTitle(page);
+        //orderTitle.Should().Contain(orderNumber);
+        //var status = await Admin.OrderStatus(page);
+        //Console.WriteLine(status);
+        //status.Should().BeEquivalentTo(TestSettings.OrderStatus);
 
-       
+    }
+
+
+
+
 }
 
 

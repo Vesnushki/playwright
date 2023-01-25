@@ -20,6 +20,8 @@ namespace PeachPayment.Pages
         public virtual ILocator CardHolder => _page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByPlaceholder("Card Holder");
         public virtual ILocator CVV => _page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").FrameLocator("iframe[name=\"card\\.cvv\"]").GetByPlaceholder("CVV");
         public virtual ILocator PayNow => _page.FrameLocator("internal:attr=[data-testid=\"iframe\"]").GetByRole(AriaRole.Button, new () { NameString = "Pay now" });
+        public virtual ILocator CancelButton => _page.Locator("button .MuiButton-label");
+        public virtual ILocator CancelButtonPopup => _page.Locator("[data-testid=\"dialog-cancel\"]");
 
 
         public async Task Click(ILocator locator)

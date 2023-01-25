@@ -19,6 +19,7 @@ namespace PeachPayment.Pages
         public virtual ILocator PayAndSaveNewCartMethod => _page.GetByLabel("Pay and save New Card");
         public virtual ILocator PayWithSavedCartPaymentMethodSubcribtion => _page.Locator("[test-id='saved_card'] input");
         public virtual ILocator PayWithSavedCartPaymentMethod => _page.Locator("[test-id='saved_card'] input").First;
+        public virtual ILocator CheckMoneyOrder => _page.Locator("#checkmo");
         public virtual ILocator ContinueButton => _page.GetByRole(AriaRole.Button, new() { NameString = "Continue to payment" });
 
         public virtual ILocator GetCardNumber()
