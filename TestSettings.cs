@@ -10,6 +10,7 @@ namespace PeachPayment
     internal class TestSettings
     {
         public static string EnvUrl { get; set; } = "https://magento.x2y.dev/";
+        public static string ShoppingCartURL { get; set; } = "https://magento.x2y.dev/checkout/cart/";
         public static string AdminUrl { get; set; } = "https://magento.x2y.dev/admin";
         public static string ConfigurableProductUrl { get; set; } = "https://magento.x2y.dev/radiant-tee.html";
         public static string SimpleFirstProductUrl { get; set; } = "https://magento.x2y.dev/push-it-messenger-bag.html";

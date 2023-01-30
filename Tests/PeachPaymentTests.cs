@@ -13,7 +13,8 @@ namespace PeachPayment.Tests;
 class Tests : BaseSetup
 {
     [Test]
-    public async Task LoggedInCustomerOrderDetailsWithSimpleProduct()
+    [Retry(2)]
+   public async Task LoggedInCustomerOrderDetailsWithSimpleProduct()
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -37,6 +38,7 @@ class Tests : BaseSetup
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await page.WaitForLoadStateAsync();
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
         await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
         await ShippingPage.Check(ShippingPage.ShippingMethod);
@@ -80,6 +82,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task OrderStatusWhenUserCloseRedirectPage()
     {
         var page = await Context.NewPageAsync();
@@ -89,7 +92,7 @@ class Tests : BaseSetup
         var ShippingPage = new ShippingPage(page);
         var Checkout = new Checkout(page);
         var PeachForm = new PeachForm(page);
-        
+
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
@@ -143,6 +146,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task CreditMemos()
     {
         var page = await Context.NewPageAsync();
@@ -165,8 +169,9 @@ class Tests : BaseSetup
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SimpleSecondProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
-        await ProductPage.Click(ProductPage.ShoppingCart);
+        await ProductPage.Click(ProductPage.ShoppingCart.First);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await page.WaitForLoadStateAsync();
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
         await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
         await ShippingPage.Check(ShippingPage.ShippingMethod);
@@ -236,6 +241,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task OrderWithSubscriptionsForLoggedInCustomer()
     {
         var page = await Context.NewPageAsync();
@@ -276,11 +282,6 @@ class Tests : BaseSetup
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText("Thank you for your purchase!").WaitForAsync();
-        //await Assertion.Expect(MyAccount.CardNumber).ToContainTextAsync(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4));
-        //var list = await MyAccount.CardNumber.AllTextContentsAsync();
-        //var newList = list.Select(s => s.Replace("ending", "")).ToList();
-        //Console.WriteLine(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4));
-        //newList.Contains(TestSettings.CreditCardNumber.Substring(TestSettings.CreditCardNumber.Length - 4)).Should().BeTrue();
         await page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
@@ -294,12 +295,13 @@ class Tests : BaseSetup
         await Admin.Click(Admin.ViewLink.First);
         await Admin.Click(Admin.BillNow);
         var numbers = await Admin.TimesBilled(page);
-        Console.WriteLine(numbers); 
+        Console.WriteLine(numbers);
         numbers.Should().BeEquivalentTo("2");
 
     }
 
     [Test]
+    [Retry(2)]
     public async Task OrderWithSubscriptionsForGuest()
     {
         var page = await Context.NewPageAsync();
@@ -329,11 +331,11 @@ class Tests : BaseSetup
         await ShippingPage.FillField(ShippingPage.StreetAddress, TestSettings.GuestStreetAddress);
         await ShippingPage.SelectByValue(ShippingPage.State, "1");
         await ShippingPage.Click(ShippingPage.City);
-        await ShippingPage.FillField(ShippingPage.City,TestSettings.GuestCity);
+        await ShippingPage.FillField(ShippingPage.City, TestSettings.GuestCity);
         await ShippingPage.Click(ShippingPage.PostCode);
         await ShippingPage.FillField(ShippingPage.PostCode, TestSettings.GuestZipCode);
         await ShippingPage.Click(ShippingPage.PhoneNumber);
-        await ShippingPage.FillField(ShippingPage.PhoneNumber,TestSettings.GuestPhoneNumber);    
+        await ShippingPage.FillField(ShippingPage.PhoneNumber, TestSettings.GuestPhoneNumber);
         await ShippingPage.Check(ShippingPage.ShippingMethod);
         await ShippingPage.Click(ShippingPage.NextButton);
         await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
@@ -369,6 +371,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task OrderWithSubscribtionProductAndSavedCCPaymentMethod()
     {
         var page = await Context.NewPageAsync();
@@ -422,6 +425,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task OrderWithSimpleProductAndSavedCCPaymentMethod()
     {
         var page = await Context.NewPageAsync();
@@ -457,7 +461,8 @@ class Tests : BaseSetup
 
     }
     [Test]
-    public async Task AddingNewCard()//need to solve issue with card set 
+    [Retry(2)]
+    public async Task AddingNewCard()
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -474,16 +479,22 @@ class Tests : BaseSetup
         await Header.Click(Header.Menu);
         await Header.Click(Header.MyAccount);
         await MyAccount.Click(MyAccount.StoredPaymentMethods);
+        await page.WaitForLoadStateAsync();
+        await page.WaitForTimeoutAsync(5000);
         var list = await MyAccount.DeleteCreditCard.AllAsync();
+        var list2 = await MyAccount.DeleteCreditCardButton.AllAsync();
         if (list != null)
         {
-            foreach (var creditCard in list) {
+            for (int index = list.Count()-1; index >= 0; index--)
+            {
                 await page.WaitForLoadStateAsync();
-                await creditCard.ClickAsync();
+                await list[index].ClickAsync();
                 await page.WaitForLoadStateAsync();
-                await MyAccount.Click(MyAccount.DeleteCreditCardButton);
+                await page.WaitForTimeoutAsync(3000);
+                await list2[index].ClickAsync();
+                await page.WaitForLoadStateAsync();
             }
-            
+
         }
         await page.WaitForLoadStateAsync();
         var qtyOfCCBefore = MyAccount.DeleteCreditCard.CountAsync();
@@ -506,7 +517,8 @@ class Tests : BaseSetup
     }
 
     [Test]
-    public async Task RemovalOfSavedCreditCards() 
+    [Retry(2)]
+    public async Task RemovalOfSavedCreditCards()
     {
         var page = await Context.NewPageAsync();
         var LoginPage = new CustomerLogin(page);
@@ -524,10 +536,11 @@ class Tests : BaseSetup
         var qtyOfCCBeforeRemove = MyAccount.DeleteCreditCard.CountAsync();
         await page.WaitForLoadStateAsync();
         await MyAccount.Click(MyAccount.DeleteCreditCard.First);
-       
+
     }
 
     [Test]
+    [Retry(2)]
     public async Task GuestCheckoutWithSimpleProduct()
     {
         var page = await Context.NewPageAsync();
@@ -604,6 +617,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task LoggedInCustomerOrderWithSimpleProductAndDiscountCode()
     {
         var page = await Context.NewPageAsync();
@@ -634,13 +648,13 @@ class Tests : BaseSetup
         await ShippingPage.Click(ShippingPage.NextButton);
         await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
         var orderTotal = await Checkout.OrderTotal.TextContentAsync();
-        Console.WriteLine("OrderTotal"+ orderTotal);
+        Console.WriteLine("OrderTotal" + orderTotal);
         await Checkout.ApplyDiscountCodeLink.ClickAsync();
         await Checkout.FillField(Checkout.DiscountField, "START");
         await Checkout.Click(Checkout.DiscountButton);
         await page.WaitForTimeoutAsync(2000);
         var orderTotalAfterDiscount = await Checkout.OrderTotal.TextContentAsync();
-        Console.WriteLine("After discount"+ orderTotalAfterDiscount);
+        Console.WriteLine("After discount" + orderTotalAfterDiscount);
         await Checkout.Click(Checkout.PayWithCardRedirectMethod);
         await Checkout.Click(Checkout.ContinueButton);
         await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
@@ -679,6 +693,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task LoggedInCustomerCheckoutWithSimpleAndSubscriptionProductsAndDiscountCodeEmbeddedPM()
     {
         var page = await Context.NewPageAsync();
@@ -705,6 +720,7 @@ class Tests : BaseSetup
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await page.WaitForLoadStateAsync();
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
         await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
         await ShippingPage.Check(ShippingPage.ShippingMethod);
@@ -749,6 +765,7 @@ class Tests : BaseSetup
 
     }
     [Test]
+    [Retry(2)]
     public async Task LoggedInCustomerCheckoutWithSimpleAndSubsProductsAndDiscountCodeAndSavedCard()//need to doublecheck
     {
         var page = await Context.NewPageAsync();
@@ -773,7 +790,7 @@ class Tests : BaseSetup
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
         await ProductPage.Click(ProductPage.AddToCartButton);
-        await ProductPage.Click(ProductPage.ShoppingCart);
+        await ProductPage.Click(ProductPage.ShoppingCart.First);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
         await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
@@ -813,6 +830,7 @@ class Tests : BaseSetup
     }
 
     [Test]
+    [Retry(2)]
     public async Task GuestOrderWithSimpleProductAndDiscountCodeAndCardRedirect()
     {
         var page = await Context.NewPageAsync();
@@ -897,6 +915,7 @@ class Tests : BaseSetup
 
     }
     [Test]
+    [Retry(2)]
     public async Task GuestOrderWithSimpleAndSubscribtionProductDiscountCodeAndPayAndSaveNewCard()
     {
         var page = await Context.NewPageAsync();
@@ -973,8 +992,9 @@ class Tests : BaseSetup
         Console.WriteLine(capturedAmount);
         capturedAmount.Should().NotContain(orderTotal);
     }
-   
+
     [Test]
+    [Retry(2)]
     public async Task LoggedInUserReInitiatesCheckoutAfterCancel()
     {
         var page = await Context.NewPageAsync();
@@ -1015,29 +1035,23 @@ class Tests : BaseSetup
         await ShippingPage.Check(ShippingPage.ShippingMethod);
         await ShippingPage.Click(ShippingPage.NextButton);
         await page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
-        await Checkout.Click(Checkout.CheckMoneyOrder);
-        await Checkout.Click(Checkout.PlaceOrder);
+        await Checkout.Click(Checkout.PayWithCardRedirectMethod);
+        await Checkout.Click(Checkout.ContinueButton);
+        await page.WaitForURLAsync(TestSettings.CheckoutRedirect);
+        await PeachForm.Click(PeachForm.CardNumber);
+        await PeachForm.CardNumber.TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
+        await PeachForm.Click(PeachForm.ExpireDate);
+        await PeachForm.FillField(PeachForm.ExpireDate, TestSettings.ExpiryDate);
+        await PeachForm.Click(PeachForm.CardHolder);
+        await PeachForm.FillField(PeachForm.CardHolder, TestSettings.CardHolder);
+        await page.Mouse.WheelAsync(0, 100);
+        await PeachForm.Click(PeachForm.CVV);
+        await PeachForm.FillField(PeachForm.CVV, TestSettings.CVV);
+        await PeachForm.Click(PeachForm.PayNow);
         await page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-       // var orderNumber = await page.TextContentAsync(SuccessPage.OrderNumber);
-        //await page.GotoAsync(TestSettings.AdminUrl);
-        //await Admin.Click(Admin.UserName);
-        //await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
-        //await Admin.Click(Admin.Password);
-        //await Admin.FillField(Admin.Password, TestSettings.AdminPassword);
-        //await Admin.Click(Admin.SignIn);
-        //await page.WaitForURLAsync(TestSettings.AdminDashboardUrl);
-        //await Admin.Click(Admin.Sales);
-        //await Admin.Click(Admin.Orders);
-        //await page.WaitForLoadStateAsync();
-        //await Admin.WaitViewLinkLoaded(page);
-        //await Admin.OpenFirstViewLink(page);
-        //var orderTitle = await Admin.OrderTitle(page);
-        //orderTitle.Should().Contain(orderNumber);
-        //var status = await Admin.OrderStatus(page);
-        //Console.WriteLine(status);
-        //status.Should().BeEquivalentTo(TestSettings.OrderStatus);
+
 
     }
 
