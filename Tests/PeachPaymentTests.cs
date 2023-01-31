@@ -26,6 +26,7 @@ class Tests : BaseSetup
         var SuccessPage = new SuccessOrderPage(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -33,6 +34,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -92,6 +95,7 @@ class Tests : BaseSetup
         var ShippingPage = new ShippingPage(page);
         var Checkout = new Checkout(page);
         var PeachForm = new PeachForm(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -99,6 +103,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -158,6 +164,7 @@ class Tests : BaseSetup
         var PeachForm = new PeachForm(page);
         var Admin = new Admin(page);
         var Assertion = new PlaywrightTest();
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -165,11 +172,14 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SimpleSecondProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart.First);
+        await page.WaitForLoadStateAsync();
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
         await page.WaitForLoadStateAsync();
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
@@ -252,6 +262,7 @@ class Tests : BaseSetup
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -259,6 +270,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -311,9 +324,12 @@ class Tests : BaseSetup
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -382,12 +398,16 @@ class Tests : BaseSetup
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
         var LoginPage = new CustomerLogin(page);
+        var Helper = new Helper();
+
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.EnvUrl);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
@@ -435,12 +455,16 @@ class Tests : BaseSetup
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
         var LoginPage = new CustomerLogin(page);
+        var Helper = new Helper();
+
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.EnvUrl);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
@@ -470,32 +494,21 @@ class Tests : BaseSetup
         var MyAccount = new MyAccount(page);
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
+        var Helper = new Helper();
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await Header.Click(Header.Menu);
         await Header.Click(Header.MyAccount);
         await MyAccount.Click(MyAccount.StoredPaymentMethods);
         await page.WaitForLoadStateAsync();
-        await page.WaitForTimeoutAsync(5000);
-        var list = await MyAccount.DeleteCreditCard.AllAsync();
-        var list2 = await MyAccount.DeleteCreditCardButton.AllAsync();
-        if (list != null)
-        {
-            for (int index = list.Count()-1; index >= 0; index--)
-            {
-                await page.WaitForLoadStateAsync();
-                await list[index].ClickAsync();
-                await page.WaitForLoadStateAsync();
-                await page.WaitForTimeoutAsync(3000);
-                await list2[index].ClickAsync();
-                await page.WaitForLoadStateAsync();
-            }
-
-        }
+        await page.WaitForTimeoutAsync(2000);
+        await Helper.DeleteCreditCard(page);
         await page.WaitForLoadStateAsync();
         var qtyOfCCBefore = MyAccount.DeleteCreditCard.CountAsync();
         await MyAccount.Click(MyAccount.AddCreditCard);
@@ -524,12 +537,15 @@ class Tests : BaseSetup
         var LoginPage = new CustomerLogin(page);
         var Header = new MagentoHeader(page);
         var MyAccount = new MyAccount(page);
+        var Helper = new Helper();
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
         await LoginPage.FillField(LoginPage.EmailField, TestSettings.CustomerEmail);
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await Header.Click(Header.Menu);
         await Header.Click(Header.MyAccount);
         await MyAccount.Click(MyAccount.StoredPaymentMethods);
@@ -552,9 +568,12 @@ class Tests : BaseSetup
         var Admin = new Admin(page);
         var PeachForm = new PeachForm(page);
         var SuccessPage = new SuccessOrderPage(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart);
@@ -630,6 +649,7 @@ class Tests : BaseSetup
         var SuccessPage = new SuccessOrderPage(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -637,6 +657,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -705,6 +727,7 @@ class Tests : BaseSetup
         var SuccessPage = new SuccessOrderPage(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -712,13 +735,15 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await page.GotoAsync(TestSettings.SubscriptionProductUrl);
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
         await ProductPage.Click(ProductPage.AddToCartButton);
-        await ProductPage.Click(ProductPage.ShoppingCart);
+        await ProductPage.Click(ProductPage.ShoppingCart.First);
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
         await page.WaitForLoadStateAsync();
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
@@ -777,6 +802,7 @@ class Tests : BaseSetup
         var SuccessPage = new SuccessOrderPage(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -784,6 +810,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -791,7 +819,9 @@ class Tests : BaseSetup
         await ProductPage.SelectByValue(ProductPage.SubscriptionProduct, "16");
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart.First);
+        await page.WaitForLoadStateAsync();
         await page.WaitForURLAsync(TestSettings.CheckoutCartUrl);
+        await page.WaitForLoadStateAsync();
         await ShoppingCart.Click(ShoppingCart.ProceedToCheckout);
         await page.WaitForURLAsync(TestSettings.CheckoutShippingUrl);
         await ShippingPage.Check(ShippingPage.ShippingMethod);
@@ -842,8 +872,11 @@ class Tests : BaseSetup
         var SuccessPage = new SuccessOrderPage(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -925,8 +958,11 @@ class Tests : BaseSetup
         var Checkout = new Checkout(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -1007,6 +1043,7 @@ class Tests : BaseSetup
         var SuccessPage = new SuccessOrderPage(page);
         var Assertion = new PlaywrightTest();
         var Admin = new Admin(page);
+        var Helper = new Helper();
 
         await page.GotoAsync(TestSettings.EnvUrl);
         await LoginPage.Click(LoginPage.SignInLink);
@@ -1014,6 +1051,8 @@ class Tests : BaseSetup
         await LoginPage.FillField(LoginPage.Password, TestSettings.CustomerPassword);
         await LoginPage.Click(LoginPage.SignInButton);
         await page.WaitForURLAsync(TestSettings.EnvUrl);
+        await page.WaitForLoadStateAsync();
+        await Helper.ShoppingCartClearance(page);
         await page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await page.WaitForURLAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
@@ -1052,12 +1091,7 @@ class Tests : BaseSetup
         await Assertion.Expect(page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
 
-
     }
-
-
-
-
 }
 
 

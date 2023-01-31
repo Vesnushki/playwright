@@ -32,7 +32,7 @@ namespace PlaywrightTests.Tests
         {
             await Context.Tracing.StopAsync(new TracingStopOptions
             {
-                Path = $"screedshots_{Guid.NewGuid()}.zip"
+                Path = $"screenshots_{Guid.NewGuid()}.zip"
             });
             await Browser.CloseAsync();
         }

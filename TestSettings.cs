@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Playwright;
+using NUnit.Framework.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -39,7 +41,7 @@ namespace PeachPayment
         public static string GuestCity { get; set; } = Faker.Address.City();
         public static string GuestZipCode { get; set; } = Faker.Address.ZipCode();
         public static string GuestPhoneNumber { get; set; } = Faker.Phone.Number();
-            
+
     }
-    
+
 }
