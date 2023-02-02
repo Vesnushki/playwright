@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Faker.Finance.Credit;
 
-namespace PeachPayment.Tests
+namespace PeachPayment.TestHelpers
 {
     public class Helper
     {

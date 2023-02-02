@@ -7,7 +7,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PeachPayment
+namespace PeachPayment.TestHelpers
 {
     internal class TestSettings
     {

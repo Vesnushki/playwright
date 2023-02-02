@@ -7,7 +7,7 @@ using PeachPayment.Pages;
 using PeachPayment.Tests;
 using PlaywrightTests.Pages;
 
-namespace PlaywrightTests.Tests
+namespace PeachPayment.TestHelpers
 {
     public class BaseSetup
     {
@@ -29,7 +29,7 @@ namespace PlaywrightTests.Tests
         protected MagentoHeader Header;
 
 
-       [SetUp]
+        [SetUp]
         public async Task Setup()
         {
             Playwright = await Microsoft.Playwright.Playwright.CreateAsync();
@@ -45,7 +45,7 @@ namespace PlaywrightTests.Tests
                 Sources = true
             });
         }
-         public void Initialization()
+        public void Initialization()
         {
             LoginPage = new CustomerLogin(Page);
             ProductPage = new ProductPage(Page);
