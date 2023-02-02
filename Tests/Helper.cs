@@ -10,7 +10,7 @@ using static Faker.Finance.Credit;
 
 namespace PeachPayment.Tests
 {
-    internal class Helper
+    public class Helper
     {
 
         public async Task ShoppingCartClearance(IPage page)

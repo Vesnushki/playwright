@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PeachPayment.Pages
 {
-    internal class ShoppingCart
+    public class ShoppingCart
     {
         private readonly IPage _page;
 
@@ -15,7 +15,7 @@ namespace PeachPayment.Pages
         {
             _page = page;
         }
-        public virtual ILocator ProceedToCheckout => _page.GetByRole(AriaRole.Button, new() { NameString = "Proceed to Checkout" });
+        public virtual ILocator ProceedToCheckout => _page.Locator("button[data-role=\"proceed-to-checkout\"]");
         
 
         public async Task Click(ILocator locator)

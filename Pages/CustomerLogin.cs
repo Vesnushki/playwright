@@ -3,7 +3,7 @@ using Microsoft.Playwright;
 
 namespace PlaywrightTests.Pages
 {
-    internal class CustomerLogin
+    public class CustomerLogin
     {
         private readonly IPage _page;
 

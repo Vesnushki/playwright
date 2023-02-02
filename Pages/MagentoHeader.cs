@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PeachPayment.Pages
 {
-    internal class MagentoHeader
+    public class MagentoHeader
     {
         private readonly IPage _page;
 

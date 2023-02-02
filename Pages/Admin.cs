@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PeachPayment.Pages
 {
-    internal class Admin
+    public class Admin
     {
         private readonly IPage _page;
 
