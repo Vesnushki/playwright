@@ -5,7 +5,7 @@ using PeachPayment.TestHelpers;
 
 namespace PeachPayment.Tests;
 
-[Parallelizable(ParallelScope.Self)]
+[NonParallelizable]
 [TestFixture]
 class OrderStatusWhenUserCloseRedirectPage : BaseSetup
 {

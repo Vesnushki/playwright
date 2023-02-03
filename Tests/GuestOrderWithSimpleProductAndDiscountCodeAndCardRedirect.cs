@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PeachPayment.Tests;
 
-[Parallelizable(ParallelScope.Self)]
+[NonParallelizable]
 [TestFixture]
 class GuestOrderWithSimpleProductAndDiscountCodeAndCardRedirect : BaseSetup
 {

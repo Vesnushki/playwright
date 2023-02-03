@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PeachPayment.Tests;
-[Parallelizable(ParallelScope.Self)]
+[NonParallelizable]
 [TestFixture]
 
 class OrderWithSimpleProductAndSavedCCPaymentMethod : BaseSetup
@@ -24,7 +24,7 @@ class OrderWithSimpleProductAndSavedCCPaymentMethod : BaseSetup
         await Page.WaitForLoadStateAsync();
         await Helper.ShoppingCartClearance(Page);
         await Page.GotoAsync(TestSettings.EnvUrl);
-        await Page.WaitForURLAsync(TestSettings.EnvUrl);
+        await Page.WaitForURLAsync(TestSettings.EnvUrl);    
         await Page.GotoAsync(TestSettings.SimpleFirstProductUrl);
         await ProductPage.Click(ProductPage.AddToCartButton);
         await ProductPage.Click(ProductPage.ShoppingCart.First);
