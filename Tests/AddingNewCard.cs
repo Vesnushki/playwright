@@ -24,7 +24,7 @@ class AddingNewCard : BaseSetup
         await Header.Click(Header.MyAccount);
         await MyAccount.Click(MyAccount.StoredPaymentMethods);
         await Page.WaitForLoadStateAsync();
-        await Page.WaitForTimeoutAsync(1000);
+        await Page.WaitForTimeoutAsync(2000);
         await Helper.DeleteCreditCard(Page);
         await Page.WaitForLoadStateAsync();
         var qtyOfCCBefore = MyAccount.DeleteCreditCard.CountAsync();

@@ -43,7 +43,7 @@ namespace PeachPayment.TestHelpers
                     await page.WaitForLoadStateAsync();
                     await list[index].ClickAsync();
                     await page.WaitForLoadStateAsync();
-                    await page.WaitForTimeoutAsync(3000);
+                    await page.WaitForTimeoutAsync(1000);
                     await list2[index].ClickAsync();
                     await page.WaitForLoadStateAsync();
                 }

@@ -34,8 +34,12 @@ namespace PeachPayment.TestHelpers
         {
             Playwright = await Microsoft.Playwright.Playwright.CreateAsync();
             Browser = await Playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            { Headless = false, Channel = "chrome" });
-            Context = await Browser.NewContextAsync();
+            { Headless = true, Channel = "chrome" });
+            //Context = await Browser.NewContextAsync();
+            Context = await Browser.NewContextAsync(new()
+            {
+                RecordVideoDir = "videos/"
+            });
             Page = await Context.NewPageAsync();
             Initialization();
             await Context.Tracing.StartAsync(new TracingStartOptions
@@ -66,7 +70,8 @@ namespace PeachPayment.TestHelpers
         {
             await Context.Tracing.StopAsync(new TracingStopOptions
             {
-                Path = $"screenshots_{Guid.NewGuid()}.zip",
+                Path = TestContext.CurrentContext.Test.Name + ".zip"
+                //Path = $"screenshots_{Guid.NewGuid()}.zip",
 
             });
             await Browser.CloseAsync();

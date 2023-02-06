@@ -16,9 +16,9 @@
     <BrowserName>chromium</BrowserName>
     <ExpectTimeout>5000</ExpectTimeout>
     <LaunchOptions>
-      <Headless>false</Headless>
+      <Headless>true</Headless>
       <Channel>msedge</Channel>
-      <SlowMo>1000</SlowMo>
+      <SlowMo>500</SlowMo>
     </LaunchOptions>
   </Playwright>
 </RunSettings>
