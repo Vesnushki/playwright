@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NUnit.Allure.Core;
 using NUnit.Framework;
 using PeachPayment.Pages;
 using PeachPayment.TestHelpers;
@@ -6,6 +7,7 @@ using PeachPayment.TestHelpers;
 namespace PeachPayment.Tests;
 [NonParallelizable]
 [TestFixture]
+[AllureNUnit]
 
 class AddingNewCard : BaseSetup
 {

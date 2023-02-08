@@ -38,7 +38,7 @@ namespace PeachPayment.TestHelpers
             //Context = await Browser.NewContextAsync();
             Context = await Browser.NewContextAsync(new()
             {
-                RecordVideoDir = "videos/"
+                RecordVideoDir = $"C:\\Users\\Elena\\source\\repos\\PlaywrightTests\\bin\\Debug\\net6.0\\videos\\{TestContext.CurrentContext.Test.Name}"
             });
             Page = await Context.NewPageAsync();
             Initialization();
