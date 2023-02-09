@@ -49,6 +49,7 @@ class OrderWithSubscriptionsForGuest : BaseSetup
         await ShippingPage.Click(ShippingPage.NextButton);
         await Page.WaitForURLAsync(TestSettings.CheckoutPaymentUrl);
         await Checkout.Click(Checkout.PayAndSaveNewCartMethod);
+        await Page.WaitForLoadStateAsync();
         await Checkout.Click(Checkout.GetCardNumber());
         await Checkout.GetCardNumber().TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
         await Checkout.Click(Checkout.ExpiryDate);

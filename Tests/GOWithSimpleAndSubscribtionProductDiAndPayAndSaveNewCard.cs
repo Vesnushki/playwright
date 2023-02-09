@@ -56,6 +56,7 @@ class GOWithSimpleAndSubscribtionProductDiAndPayAndSaveNewCard : BaseSetup
         var orderTotalAfterDiscount = await Checkout.OrderTotal.TextContentAsync();
         Console.WriteLine("After discount" + orderTotalAfterDiscount);
         await Checkout.Click(Checkout.PayAndSaveNewCartMethod);
+        await Page.WaitForLoadStateAsync();
         await Checkout.Click(Checkout.GetCardNumber());
         await Checkout.GetCardNumber().TypeAsync(TestSettings.CreditCardNumber, new() { Delay = 100 });
         await Checkout.Click(Checkout.ExpiryDate);

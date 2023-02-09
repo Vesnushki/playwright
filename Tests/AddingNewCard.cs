@@ -7,7 +7,7 @@ using PeachPayment.TestHelpers;
 namespace PeachPayment.Tests;
 [NonParallelizable]
 [TestFixture]
-[AllureNUnit]
+//[AllureNUnit]
 
 class AddingNewCard : BaseSetup
 {

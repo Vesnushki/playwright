@@ -9,6 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Allure-Report\**" />
+    <Compile Remove="Allure-Results\**" />
+    <EmbeddedResource Remove="Allure-Report\**" />
+    <EmbeddedResource Remove="Allure-Results\**" />
+    <None Remove="Allure-Report\**" />
+    <None Remove="Allure-Results\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Allure.NUnit" Version="2.9.4-preview.2" />
     <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Faker.Net" Version="2.0.154" />
@@ -26,10 +35,6 @@
     <None Update="allureConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Allure-Results\" />
-    <Folder Include="Allure-Report\" />
   </ItemGroup>
 
 </Project>
