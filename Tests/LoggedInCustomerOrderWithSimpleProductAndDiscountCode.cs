@@ -61,7 +61,7 @@ class LoggedInCustomerOrderWithSimpleProductAndDiscountCode : BaseSetup
         await Page.WaitForURLAsync(TestSettings.CheckoutSuccess);
         await Assertion.Expect(Page).ToHaveURLAsync(TestSettings.CheckoutSuccess);
         await Page.GetByText(TestSettings.OrderSuccessMessage).WaitForAsync();
-        var orderNumber = await Page.TextContentAsync(SuccessPage.OrderNumber);
+        var orderNumber = await Page.TextContentAsync(SuccessPage.OrderNumberGuest);
         await Page.GotoAsync(TestSettings.AdminUrl);
         await Admin.Click(Admin.UserName);
         await Admin.FillField(Admin.UserName, TestSettings.AdminUserName);
